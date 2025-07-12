@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import com.example.backend.domain.dtos.LoginResponseDTO;
 import com.example.backend.domain.entities.User;
 import com.example.backend.infrastructure.UserRepository;
 
@@ -19,7 +20,7 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public User login(OAuth2User principal) {
+    public LoginResponseDTO login(OAuth2User principal) {
         String email = principal.getAttribute("email");
         String name = principal.getAttribute("name");
         String imageUrl = principal.getAttribute("picture");
@@ -36,7 +37,7 @@ public class AuthService {
         String accessToken = jwtService.generateAccessToken(user.getId().toString());
         String refreshToken = jwtService.generateRefreshToken(user.getId().toString());
 
-        return user;
+        return new LoginResponseDTO(user, accessToken, refreshToken);
     }
 
     public List<User> getAllUsers() {

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.application.services.AuthService;
-import com.example.backend.domain.entities.User;
+import com.example.backend.domain.dtos.LoginResponseDTO;
 
 @RestController
 public class LoginController {
@@ -17,7 +17,7 @@ public class LoginController {
     }
 
     @GetMapping("/oauth2/login/success")
-    public User loginSuccess(@AuthenticationPrincipal OAuth2User principal) {
+    public LoginResponseDTO loginSuccess(@AuthenticationPrincipal OAuth2User principal) {
       return this.authService.login(principal);
     }
 }
