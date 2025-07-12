@@ -9,7 +9,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  const response = NextResponse.redirect(new URL("/", request.url));
+  const response = NextResponse.redirect(
+    new URL("/login/redirecting", request.url),
+    302
+  );
 
   response.cookies.set("accessToken", accessToken, {
     httpOnly: true,
