@@ -1,6 +1,8 @@
 package com.example.backend.application.services;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -33,11 +35,16 @@ public class AuthService {
                     newUser.setImageUrl(imageUrl);
                     return userRepository.save(newUser);
                 });
-        
+
         String accessToken = jwtService.generateAccessToken(user.getId().toString());
         String refreshToken = jwtService.generateRefreshToken(user.getId().toString());
 
         return new LoginResponseDTO(user, accessToken, refreshToken);
+    }
+    
+    public Optional<User> findById(String id) {
+        UUID uuid = UUID.fromString(id);
+        return userRepository.findById(uuid);
     }
 
     public List<User> getAllUsers() {
