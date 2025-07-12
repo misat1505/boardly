@@ -12,9 +12,11 @@ import com.example.backend.infrastructure.UserRepository;
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final JwtService jwtService;
 
-    public AuthService(UserRepository userRepository) {
+    public AuthService(UserRepository userRepository, JwtService jwtService) {
         this.userRepository = userRepository;
+        this.jwtService = jwtService;
     }
 
     public User login(OAuth2User principal) {
@@ -30,6 +32,9 @@ public class AuthService {
                     newUser.setImageUrl(imageUrl);
                     return userRepository.save(newUser);
                 });
+        
+        String accessToken = jwtService.generateAccessToken(user.getId().toString());
+        String refreshToken = jwtService.generateRefreshToken(user.getId().toString());
 
         return user;
     }
