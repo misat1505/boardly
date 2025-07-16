@@ -24,6 +24,7 @@ public class AuthService {
 
     public LoginResponseDTO login(OAuth2User principal) {
         String email = principal.getAttribute("email");
+        String givenName = principal.getAttribute("given_name");
         String name = principal.getAttribute("name");
         String imageUrl = principal.getAttribute("picture");
 
@@ -31,6 +32,7 @@ public class AuthService {
                 .orElseGet(() -> {
                     User newUser = new User();
                     newUser.setEmail(email);
+                    newUser.setGivenName(givenName);
                     newUser.setUsername(name);
                     newUser.setImageUrl(imageUrl);
                     return userRepository.save(newUser);
