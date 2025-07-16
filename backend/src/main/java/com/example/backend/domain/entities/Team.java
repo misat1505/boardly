@@ -22,6 +22,8 @@ public class Team {
 
     private String name;
 
+    private boolean isUpgraded;
+
     @ManyToMany
     @JoinTable(
         name = "user_team",
@@ -45,5 +47,8 @@ public class Team {
 
     public Set<User> getMembers() { return members; }
     public void setMembers(Set<User> members) { this.members = members; }
+
+    public boolean getIsUpgraded() { return isUpgraded; }
+    public void setIsUpgraded(boolean isUpgraded) { this.isUpgraded = isUpgraded; }
 }
 
