@@ -1,21 +1,8 @@
-import { cookies } from "next/headers";
+import { getCurrentUser } from "@/actions/user/getCurrentUser";
 import Image from "next/image";
-import { redirect } from "next/navigation";
 
 export default async function Home() {
-  const cookiesStore = await cookies();
-  const accessToken = cookiesStore.get("accessToken")?.value;
-
-  console.log(accessToken);
-
-  const user = await fetch("http://localhost:8080/auth/me", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  }).then((res) => {
-    if (!res.ok) redirect("/login");
-    return res.json();
-  });
+  const user = await getCurrentUser();
 
   return (
     <div>
