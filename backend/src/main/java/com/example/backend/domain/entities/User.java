@@ -1,10 +1,13 @@
 package com.example.backend.domain.entities;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -22,6 +25,9 @@ public class User {
     private String imageUrl;
 
     private boolean isPremium;
+
+    @ManyToMany(mappedBy = "members")
+    private Set<Team> teams = new HashSet<>();
 
     public User() {}
 
@@ -49,5 +55,11 @@ public class User {
     }
     
     public boolean getIsPremium() { return isPremium; }
-    public void setIsPremium(boolean isPremium) { this.isPremium = isPremium; }
+
+    public void setIsPremium(boolean isPremium) {
+        this.isPremium = isPremium;
+    }
+    
+    public Set<Team> getTeams() { return teams; }
+    public void setTeams(Set<Team> teams) { this.teams = teams; }
 }
