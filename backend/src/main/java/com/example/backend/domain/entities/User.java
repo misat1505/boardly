@@ -21,13 +21,16 @@ public class User {
 
     private String imageUrl;
 
+    private boolean isPremium;
+
     public User() {}
 
-    public User(UUID id, String username, String email, String imageUrl) {
+    public User(UUID id, String username, String email, String imageUrl, boolean isPremium) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.imageUrl = imageUrl;
+        this.isPremium = isPremium;
     }
 
     public UUID getId() { return id; }
@@ -40,5 +43,11 @@ public class User {
     public void setEmail(String email) { this.email = email; }
 
     public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+    
+    public boolean getIsPremium() { return isPremium; }
+    public void setIsPremium(boolean isPremium) { this.isPremium = isPremium; }
 }

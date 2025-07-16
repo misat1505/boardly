@@ -8,7 +8,7 @@ export default function RedirectingPage() {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      router.replace("/");
+      router.replace("/dashboard");
     }, 100);
 
     return () => clearTimeout(timeout);
