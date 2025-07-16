@@ -10,7 +10,7 @@ export async function getCurrentUser(): Promise<User> {
 
   console.log(accessToken);
 
-  const user: User = await fetch("http://localhost:8080/auth/me", {
+  const user: User = await fetch(`${process.env.NEXT_APP_API_URL}/auth/me`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },

@@ -6,7 +6,7 @@ export async function getUserTeams(): Promise<Team[]> {
   const cookiesStore = await cookies();
   const accessToken = cookiesStore.get("accessToken")?.value;
 
-  const teams: Team[] = await fetch("http://localhost:8080/teams", {
+  const teams: Team[] = await fetch(`${process.env.NEXT_APP_API_URL}/teams`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
