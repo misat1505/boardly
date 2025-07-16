@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -27,6 +29,7 @@ public class User {
     private boolean isPremium;
 
     @ManyToMany(mappedBy = "members")
+    @JsonIgnore
     private Set<Team> teams = new HashSet<>();
 
     public User() {}

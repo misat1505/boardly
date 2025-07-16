@@ -11,7 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import com.example.backend.domain.dtos.CreateTeamDTO;
 import com.example.backend.domain.entities.Team;
 import com.example.backend.domain.entities.User;
 
@@ -33,9 +36,20 @@ public class TeamController {
     if (!(principal instanceof User user)) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
-        
+
     Set<Team> teams = teamService.getUserTeams(user.getId());
     return ResponseEntity.ok(teams);
   }
   
+  @PostMapping
+  public ResponseEntity<Team> createTeam(@RequestBody CreateTeamDTO createTeamDTO) {
+    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+    if (!(principal instanceof User user)) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+        
+    Team team = teamService.createTeam(createTeamDTO, user);
+    return ResponseEntity.ok(team);
+  }
 }
