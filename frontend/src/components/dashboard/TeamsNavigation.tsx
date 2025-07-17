@@ -17,7 +17,7 @@ type TeamsNavigationProps = {
 const TeamsNavigation = async ({ teamId }: TeamsNavigationProps) => {
   const teams = await getUserTeams();
 
-  const className = "w-56 border-r-1 border-r-muted-foreground/20 bg-sidebar";
+  const className = "w-56 border-r-1 border-r-muted-foreground/20 bg-muted";
 
   if (teams.length === 0)
     return (
