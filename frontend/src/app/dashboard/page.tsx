@@ -10,7 +10,7 @@ interface PageProps {
 
 const DashboardPage = async ({ searchParams }: PageProps) => {
   const teams = await getUserTeams();
-  const team = teams.find((t) => t.id === searchParams.team);
+  const team = teams.find((t) => t.id === searchParams.team) ?? teams[0];
 
   return (
     <div className="flex w-screen min-h-screen">

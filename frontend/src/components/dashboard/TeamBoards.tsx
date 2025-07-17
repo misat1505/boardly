@@ -5,7 +5,6 @@ import {
   CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "../ui/card";
@@ -24,7 +23,7 @@ const TeamBoards = async ({ team }: TeamBoardsProps) => {
         Boards in {team.name}
       </h2>
 
-      <div>
+      <div className="grid grid-cols-4 gap-y-4">
         {boards.map((board) => (
           <Link key={board.id} href={`/b/${board.id}`}>
             <Card className="w-96 border-muted-foreground/20 hover:bg-muted">
@@ -38,8 +37,8 @@ const TeamBoards = async ({ team }: TeamBoardsProps) => {
               </CardContent>
               <CardHeader>
                 <CardTitle>{board.title}</CardTitle>
-                <CardDescription>
-                  {new Date(board.updatedAt).toLocaleDateString()}{" "}
+                <CardDescription className="text-xs">
+                  Last updated: {new Date(board.updatedAt).toLocaleDateString()}{" "}
                   {new Date(board.updatedAt).toLocaleTimeString()}
                 </CardDescription>
                 <CardAction>
