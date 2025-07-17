@@ -16,7 +16,7 @@ const DashboardPage = async ({ searchParams }: PageProps) => {
   return (
     <div className="flex w-screen min-h-screen">
       <TeamsNavigation teamId={searchParams.team} />
-      <div className="flex-grow"></div>
+      <div className="flex-grow bg-background"></div>
     </div>
   );
 };

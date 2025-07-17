@@ -31,9 +31,7 @@ const TeamsNavigation = async ({ teamId }: TeamsNavigationProps) => {
         <p className="mt-2 text-sm text-muted-foreground text-balance text-center">
           Start collaborating by creating a team.
         </p>
-        <Button className="mt-4 w-full hover:cursor-pointer">
-          Create Team
-        </Button>
+        <CreateTeam />
       </section>
     );
 
@@ -48,7 +46,7 @@ const TeamsNavigation = async ({ teamId }: TeamsNavigationProps) => {
     <section className={cn(className, "p-2")}>
       <Accordion type="single" collapsible>
         <AccordionItem value="item-1">
-          <AccordionTrigger className="hover:cursor-pointer hover:bg-secondary px-2 hover:no-underline">
+          <AccordionTrigger className="hover:cursor-pointer hover:bg-secondary px-2 hover:no-underline text-primary-foreground">
             {selectedTeam.name}
           </AccordionTrigger>
           <AccordionContent>
@@ -57,28 +55,30 @@ const TeamsNavigation = async ({ teamId }: TeamsNavigationProps) => {
                 key={team.id}
                 href={`/dashboard?team=${team.id}`}
                 className={cn(
-                  "block w-[calc(100%-0.5rem)] bg-secondary/50 my-1 rounded-sm p-2 hover:bg-secondary transition-colors mx-1",
+                  "block w-[calc(100%-0.5rem)] bg-secondary/20 my-1 rounded-sm p-2 hover:bg-secondary/30 transition-colors mx-1 text-primary-foreground",
                   {
-                    "bg-primary hover:bg-primary/90 text-primary-foreground":
-                      team.id === teamId,
+                    "bg-primary/80 hover:bg-primary/70": team.id === teamId,
                   }
                 )}
               >
                 <h2 className="font-bold">{team.name}</h2>
-                <p
-                  className={cn("text-xs text-muted-foreground", {
-                    "text-muted": team.id === teamId,
-                  })}
-                >
+                <p className="text-xs text-muted-foreground/50">
                   {team.members.length} member
                   {team.members.length > 1 ? "(s)" : ""}
                 </p>
               </Link>
             ))}
+            <CreateTeam />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
     </section>
+  );
+};
+
+const CreateTeam = () => {
+  return (
+    <Button className="mt-4 w-full hover:cursor-pointer">Create Team</Button>
   );
 };
 
