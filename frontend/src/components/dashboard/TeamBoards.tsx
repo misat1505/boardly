@@ -32,7 +32,7 @@ const TeamBoards = async ({ team }: TeamBoardsProps) => {
                 <Image
                   src="/board.png"
                   alt={board.title}
-                  width={300}
+                  width={350}
                   height={300}
                 />
               </CardContent>
