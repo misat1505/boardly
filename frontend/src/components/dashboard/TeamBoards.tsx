@@ -27,7 +27,7 @@ const TeamBoards = async ({ team }: TeamBoardsProps) => {
       <div>
         {boards.map((board) => (
           <Link key={board.id} href={`/b/${board.id}`}>
-            <Card className="w-96 border-muted-foreground/20 hover:bg-">
+            <Card className="w-96 border-muted-foreground/20 hover:bg-muted">
               <CardContent>
                 <Image
                   src="/board.png"
