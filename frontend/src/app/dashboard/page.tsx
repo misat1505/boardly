@@ -1,6 +1,7 @@
 import { getTeamBoards } from "@/actions/teams/getTeamBoards";
 import { getUserTeams } from "@/actions/teams/getUserTeams";
 import { getCurrentUser } from "@/actions/user/getCurrentUser";
+import { Button } from "@/components/ui/button";
 import { Team } from "@/types/Team";
 
 const DashboardPage = async () => {
@@ -25,7 +26,7 @@ const TeamCard = async ({ team }: { team: Team }) => {
       <h2>{team.name}</h2>
       <div>
         {boards.map((board) => (
-          <div key={board.id}>{board.title}</div>
+          <Button key={board.id}>{board.title}</Button>
         ))}
       </div>
     </div>
