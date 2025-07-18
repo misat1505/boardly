@@ -1,4 +1,3 @@
-import { getTeamBoards } from "@/actions/teams/getTeamBoards";
 import { Team } from "@/types/Team";
 import {
   Card,
@@ -10,12 +9,12 @@ import {
 } from "../ui/card";
 import Image from "next/image";
 import Link from "next/link";
-import { buttonVariants } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import { Board } from "@/types/Board";
 
-type TeamBoardsProps = { boards: Board[] };
+type TeamBoardsProps = { team: Team; boards: Board[] };
 
-const TeamBoards = async ({ boards }: TeamBoardsProps) => {
+const TeamBoards = async ({ team, boards }: TeamBoardsProps) => {
   return (
     <div>
       <div className="mb-4">
@@ -26,11 +25,34 @@ const TeamBoards = async ({ boards }: TeamBoardsProps) => {
         </p>
       </div>
 
-      <div className="grid grid-cols-4 gap-y-4">
-        {boards.map((board) => (
-          <BoardCard key={board.id} board={board} />
-        ))}
-      </div>
+      {boards.length > 0 ? (
+        <div className="">
+          <div className="grid grid-cols-4 gap-y-4">
+            {boards.map((board) => (
+              <BoardCard key={board.id} board={board} />
+            ))}
+          </div>
+          <div className="mx-auto w-fit mt-4">
+            <CreateBoard />
+          </div>
+        </div>
+      ) : (
+        <NoBoards team={team} />
+      )}
+    </div>
+  );
+};
+
+type NoBoardsProps = { team: Team };
+
+const NoBoards = ({ team }: NoBoardsProps) => {
+  return (
+    <div className="flex flex-col justify-center items-center gap-4">
+      <h2>
+        {team.name} hasn&apos;t created any boards yet. Let&apos;s change that!
+      </h2>
+
+      <CreateBoard />
     </div>
   );
 };
@@ -63,6 +85,12 @@ const BoardCard = ({ board }: BoardCardProps) => {
       </Card>
     </Link>
   );
+};
+
+type CreateBoardProps = {};
+
+const CreateBoard = ({}: CreateBoardProps) => {
+  return <Button className="hover:cursor-pointer">Create New Board</Button>;
 };
 
 export default TeamBoards;

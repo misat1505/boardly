@@ -31,7 +31,7 @@ const TeamDetails = async ({ team }: TeamDetailsProps) => {
         <TeamInfo team={team} boards={boards} />
       </div>
       <div className="mb-8">
-        <TeamBoards boards={boards} />
+        <TeamBoards team={team} boards={boards} />
       </div>
       <Members members={team.members} />
     </div>
@@ -77,7 +77,7 @@ const TeamInfo = ({ team, boards }: TeamInfoProps) => {
           )}
           href="#"
         >
-          Upgrade this team to be able to create unlimited number of boards!
+          Upgrade your team to create as many boards as you need—no limits!
         </Link>
       ) : null}
     </div>
