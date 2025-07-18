@@ -9,6 +9,7 @@ import {
   AccordionTrigger,
 } from "../ui/accordion";
 import Link from "next/link";
+import CreateTeam from "./CreateTeam";
 
 type TeamsNavigationProps = {
   teamId?: Team["id"];
@@ -28,10 +29,14 @@ const TeamsNavigation = async ({ teamId }: TeamsNavigationProps) => {
         )}
       >
         <h2 className="text-lg font-semibold">You have no teams</h2>
-        <p className="mt-2 text-sm text-muted-foreground text-balance text-center">
+        <p className="mt-2 text-xs text-muted-foreground text-balance text-center">
           Start collaborating by creating a team.
         </p>
-        <CreateTeam />
+        <CreateTeam>
+          <div className="mt-4 w-full">
+            <Button className="hover:cursor-pointer w-full">Create Team</Button>
+          </div>
+        </CreateTeam>
       </section>
     );
 
@@ -68,17 +73,15 @@ const TeamsNavigation = async ({ teamId }: TeamsNavigationProps) => {
                 </p>
               </Link>
             ))}
-            <CreateTeam />
+            <CreateTeam>
+              <Button className="hover:cursor-pointer w-full">
+                Create Team
+              </Button>
+            </CreateTeam>
           </AccordionContent>
         </AccordionItem>
       </Accordion>
     </section>
-  );
-};
-
-const CreateTeam = () => {
-  return (
-    <Button className="mt-4 w-full hover:cursor-pointer">Create Team</Button>
   );
 };
 
