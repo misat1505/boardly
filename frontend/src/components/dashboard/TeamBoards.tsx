@@ -13,17 +13,13 @@ import Link from "next/link";
 import { buttonVariants } from "../ui/button";
 import { Board } from "@/types/Board";
 
-type TeamBoardsProps = { team: Team };
+type TeamBoardsProps = { boards: Board[] };
 
-const TeamBoards = async ({ team }: TeamBoardsProps) => {
-  const boards = await getTeamBoards(team.id);
-
+const TeamBoards = async ({ boards }: TeamBoardsProps) => {
   return (
     <div>
       <div className="mb-4">
-        <h2 className="font-bold text-2xl text-muted-foreground">
-          Boards in {team.name}
-        </h2>
+        <h2 className="font-bold text-2xl text-muted-foreground">Boards</h2>
         <p className="text-xs text-muted-foreground/50">
           View and manage your team's boards. Browse, open, filter, or create a
           new board.

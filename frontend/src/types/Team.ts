@@ -4,4 +4,5 @@ export type Team = {
   id: string;
   name: string;
   members: User[];
+  isUpgraded: boolean;
 };
