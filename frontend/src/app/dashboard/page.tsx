@@ -1,6 +1,6 @@
 import { getUserTeams } from "@/actions/teams/getUserTeams";
 import DashboardNavbar from "@/components/dashboard/DashboardNavbar";
-import TeamBoards from "@/components/dashboard/TeamBoards";
+import TeamDetails from "@/components/dashboard/TeamDetails";
 import TeamsNavigation from "@/components/dashboard/TeamsNavigation";
 import { Team } from "@/types/Team";
 
@@ -17,7 +17,7 @@ const DashboardPage = async ({ searchParams }: PageProps) => {
       <TeamsNavigation teamId={searchParams.team} />
       <div className="flex-grow bg-background">
         <DashboardNavbar />
-        {team ? <TeamBoards team={team} /> : <div>No team selected!</div>}
+        {team ? <TeamDetails team={team} /> : <div>No team selected!</div>}
       </div>
     </div>
   );
