@@ -171,4 +171,5 @@
 
 body {
   letter-spacing: var(--tracking-normal);
+  overflow-x: hidden;
 }

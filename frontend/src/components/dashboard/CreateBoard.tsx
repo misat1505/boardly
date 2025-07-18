@@ -22,7 +22,7 @@ type CreateBoardProps = PropsWithChildren & { team: Team };
 const CreateBoard = ({ children, team }: CreateBoardProps) => {
   return (
     <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create a New Board</DialogTitle>
