@@ -1,15 +1,4 @@
 import { Team } from "@/types/Team";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
-import Image from "next/image";
-import Link from "next/link";
-import { Button, buttonVariants } from "../ui/button";
 import { Board } from "@/types/Board";
 import TeamBoardsContent from "./TeamBoardsContent";
 import CreateBoard from "./CreateBoard";
@@ -20,7 +9,7 @@ const TeamBoards = async ({ team, boards }: TeamBoardsProps) => {
   return (
     <div>
       <div className="mb-4">
-        <h2 className="font-bold text-2xl">Boards</h2>
+        <h2 className="text-xl">Boards</h2>
 
         <p className="text-xs text-muted-foreground/50">
           View and manage your team's boards. Browse, open, filter, or create a

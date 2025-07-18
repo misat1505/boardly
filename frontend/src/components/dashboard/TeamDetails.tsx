@@ -89,7 +89,7 @@ type MembersProps = { members: Team["members"] };
 const Members = ({ members }: MembersProps) => {
   return (
     <section className="">
-      <h2 className="text-xl font-bold">Members ({members.length})</h2>
+      <h2 className="text-xl">Members ({members.length})</h2>
       <Table className="text-muted-foreground">
         <TableHeader>
           <TableRow>

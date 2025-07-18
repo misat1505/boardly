@@ -27,12 +27,12 @@ const TeamBoardsContent = ({ boards }: TeamBoardsContentProps) => {
   return (
     <div>
       <div className="flex items-center space-x-4">
-        <h3 className="text-muted-foreground font-bold">Filter by</h3>
+        <h3 className="text-muted-foreground text-sm font-bold">Filter by</h3>
         <FloatingLabelInput
           label="Board Title"
           id="board-title-input"
           onChange={(e) => setText(e.target.value.trim())}
-          className="w-64"
+          className="w-64 dark:bg-background"
         />
       </div>
       <div className="grid grid-cols-4 gap-y-4 mt-4">
