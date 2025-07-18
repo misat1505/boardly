@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import Image from "next/image";
-import { buttonVariants } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import { useState } from "react";
 import { FloatingLabelInput } from "../ui/floating-label-input";
 
@@ -19,6 +19,7 @@ type TeamBoardsContentProps = { boards: Board[] };
 
 const TeamBoardsContent = ({ boards }: TeamBoardsContentProps) => {
   const [text, setText] = useState("");
+  console.log(boards);
 
   const filteredBoards = boards.filter((board) =>
     board.title.toLowerCase().includes(text.toLowerCase())
@@ -47,7 +48,9 @@ const TeamBoardsContent = ({ boards }: TeamBoardsContentProps) => {
         )}
       </div>
       <div className="mx-auto w-fit mt-4">
-        <CreateBoard />
+        <CreateBoard team={boards[0].team}>
+          <Button>Create Board</Button>
+        </CreateBoard>
       </div>
     </div>
   );

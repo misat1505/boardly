@@ -2,6 +2,7 @@ import { Team } from "@/types/Team";
 import { Board } from "@/types/Board";
 import TeamBoardsContent from "./TeamBoardsContent";
 import CreateBoard from "./CreateBoard";
+import { Button } from "../ui/button";
 
 type TeamBoardsProps = { team: Team; boards: Board[] };
 
@@ -35,7 +36,9 @@ const NoBoards = ({ team }: NoBoardsProps) => {
         {team.name} hasn&apos;t created any boards yet. Let&apos;s change that!
       </h2>
 
-      <CreateBoard />
+      <CreateBoard team={team}>
+        <Button>Create Board</Button>
+      </CreateBoard>
     </div>
   );
 };
