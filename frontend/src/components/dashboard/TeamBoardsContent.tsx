@@ -1,3 +1,4 @@
+"use client";
 import { Board } from "@/types/Board";
 import CreateBoard from "./CreateBoard";
 import Link from "next/link";
@@ -11,16 +12,39 @@ import {
 } from "../ui/card";
 import Image from "next/image";
 import { buttonVariants } from "../ui/button";
+import { useState } from "react";
+import { FloatingLabelInput } from "../ui/floating-label-input";
 
 type TeamBoardsContentProps = { boards: Board[] };
 
 const TeamBoardsContent = ({ boards }: TeamBoardsContentProps) => {
+  const [text, setText] = useState("");
+
+  const filteredBoards = boards.filter((board) =>
+    board.title.toLowerCase().includes(text.toLowerCase())
+  );
+
   return (
     <div>
-      <div className="grid grid-cols-4 gap-y-4">
-        {boards.map((board) => (
-          <BoardCard key={board.id} board={board} />
-        ))}
+      <div className="flex items-center space-x-4">
+        <h3 className="text-muted-foreground font-bold">Filter by</h3>
+        <FloatingLabelInput
+          label="Board Title"
+          id="board-title-input"
+          onChange={(e) => setText(e.target.value.trim())}
+          className="w-64"
+        />
+      </div>
+      <div className="grid grid-cols-4 gap-y-4 mt-4">
+        {filteredBoards.length > 0 ? (
+          filteredBoards.map((board) => (
+            <BoardCard key={board.id} board={board} />
+          ))
+        ) : (
+          <p className="text-xs text-red-500 col-span-4">
+            No boards match your search.
+          </p>
+        )}
       </div>
       <div className="mx-auto w-fit mt-4">
         <CreateBoard />
