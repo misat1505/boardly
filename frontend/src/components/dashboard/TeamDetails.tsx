@@ -33,7 +33,9 @@ const TeamDetails = async ({ team }: TeamDetailsProps) => {
       <div className="mb-8">
         <TeamBoards team={team} boards={boards} />
       </div>
-      <Members members={team.members} />
+      <div className="mb-8">
+        <Members members={team.members} />
+      </div>
     </div>
   );
 };
