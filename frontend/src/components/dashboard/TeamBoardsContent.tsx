@@ -36,7 +36,7 @@ const TeamBoardsContent = ({ boards }: TeamBoardsContentProps) => {
           className="w-64 dark:bg-background"
         />
       </div>
-      <div className="grid grid-cols-4 gap-4 mt-4">
+      <div className="grid grid-cols-4 gap-4 mt-4 mr-4">
         {filteredBoards.length > 0 ? (
           <>
             {filteredBoards.map((board) => (

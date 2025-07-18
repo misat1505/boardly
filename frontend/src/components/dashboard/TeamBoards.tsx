@@ -10,7 +10,7 @@ const TeamBoards = async ({ team, boards }: TeamBoardsProps) => {
   return (
     <div>
       <div className="mb-4">
-        <h2 className="text-xl">Boards</h2>
+        <h2 className="text-xl">Boards ({boards.length})</h2>
 
         <p className="text-xs text-muted-foreground/50">
           View and manage your team's boards. Browse, open, filter, or create a
