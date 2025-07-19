@@ -1,3 +1,4 @@
+import { useWhiteboardContext } from "@/context/WhiteboardContext";
 import { Button } from "./ui/button";
 import { ThemeSwitch } from "./ui/theme-switch";
 import {
@@ -11,9 +12,11 @@ import {
 import { RiInformation2Line } from "react-icons/ri";
 
 const UserSettings = () => {
+  const { user } = useWhiteboardContext();
+
   return (
     <div className="z-10 fixed top-4 right-4 p-2 rounded-md bg-sidebar border-sidebar-border border flex space-x-1 items-center hover:cursor-auto">
-      <h2 className="mr-4">Hello, Bob</h2>
+      <h2 className="mr-4">Hello, {user.givenName}</h2>
       <ThemeSwitch />
       <div className="">
         <TourTrigger asChild>

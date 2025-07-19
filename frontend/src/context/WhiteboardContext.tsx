@@ -2,6 +2,7 @@
 import { LOCAL_STORAGE_KEYS } from "@/constants/localStorageKeys";
 import useHandlePaste from "@/hooks/board/useHandlePaste";
 import usePersistBoard from "@/hooks/board/usePersistBoard";
+import { Board } from "@/types/Board";
 import { BoardMode } from "@/types/BoardMode";
 import { Cursor } from "@/types/Cursor";
 import {
@@ -15,6 +16,7 @@ import {
   Text,
   TShape,
 } from "@/types/shapes";
+import { User } from "@/types/User";
 import { detectCollisions } from "@/utils/detectCollisions";
 import { KonvaEventObject, Node, NodeConfig } from "konva/lib/Node";
 import {
@@ -29,7 +31,7 @@ import {
 } from "react";
 import { useLocalStorage } from "usehooks-ts";
 
-type WhiteboardContextProps = PropsWithChildren & {};
+type WhiteboardContextProps = PropsWithChildren & { board: Board; user: User };
 
 type Position = { x: number; y: number };
 
@@ -63,6 +65,8 @@ export type WhiteboardContextProvidedValues = {
   removeFromGroupSelectionOnClick: (
     shape: Shape
   ) => (e: KonvaEventObject<MouseEvent, Node<NodeConfig>>) => void;
+  board: Board;
+  user: User;
 };
 
 const WhiteboardContext = createContext<
@@ -76,7 +80,11 @@ export const useWhiteboardContext = () => {
   return context;
 };
 
-const WhiteboardProvider = ({ children }: WhiteboardContextProps) => {
+const WhiteboardProvider = ({
+  children,
+  board,
+  user,
+}: WhiteboardContextProps) => {
   const [color] = useLocalStorage<string>(
     LOCAL_STORAGE_KEYS.COLOR.name,
     LOCAL_STORAGE_KEYS.COLOR.defaultValue
@@ -107,8 +115,6 @@ const WhiteboardProvider = ({ children }: WhiteboardContextProps) => {
   const usePersistBoardValues = usePersistBoard({
     shapes,
     position,
-    setShapes,
-    setPosition,
     stageRef,
   });
 
@@ -121,6 +127,32 @@ const WhiteboardProvider = ({ children }: WhiteboardContextProps) => {
   };
 
   useHandlePaste({ getTransformedPointer, setShapes });
+
+  useEffect(() => {
+    const json = board.content;
+    if (json) {
+      try {
+        const data = JSON.parse(json);
+        const savedShapes = data.shapes as TShape[];
+        if (savedShapes) {
+          const parsedShapes = savedShapes.map((shape) => {
+            if (shape.type === "blank") return new Blank({ ...shape });
+            else if (shape.type === "handwrite")
+              return new Handwrite({ ...shape });
+            else if (shape.type === "rect") return new Rectangle({ ...shape });
+            else if (shape.type === "selection")
+              return new Selection({ ...shape });
+            else if (shape.type === "image") return new Image({ ...shape });
+            else return new Text({ ...shape });
+          });
+          setShapes(parsedShapes);
+        }
+        if (data.position) setPosition(data.position);
+      } catch (err) {
+        console.error("Failed to parse saved board", err);
+      }
+    }
+  }, []);
 
   const handleMouseDown = () => {
     if (mode === BoardMode.MOVING) {
@@ -399,6 +431,8 @@ const WhiteboardProvider = ({ children }: WhiteboardContextProps) => {
         appendToGroupSelectionOnClick,
         onDragMove,
         removeFromGroupSelectionOnClick,
+        board,
+        user,
         ...usePersistBoardValues,
       }}
     >

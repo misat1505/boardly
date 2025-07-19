@@ -1,4 +1,5 @@
 import { getBoardById } from "@/actions/teams/getBoardById";
+import { getCurrentUser } from "@/actions/user/getCurrentUser";
 import Whiteboard from "@/components/WhiteBoard";
 import WhiteboardProvider from "@/context/WhiteboardContext";
 import { notFound } from "next/navigation";
@@ -9,11 +10,12 @@ const BoardPage = async ({ params }: BoardPageProps) => {
   const { id } = await params;
 
   const board = await getBoardById(id);
+  const user = await getCurrentUser();
 
   if (!board) notFound();
 
   return (
-    <WhiteboardProvider>
+    <WhiteboardProvider board={board} user={user}>
       <Whiteboard />
     </WhiteboardProvider>
   );
