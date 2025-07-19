@@ -13,8 +13,8 @@ const TeamBoards = async ({ team, boards }: TeamBoardsProps) => {
         <h2 className="text-xl">Boards ({boards.length})</h2>
 
         <p className="text-xs text-muted-foreground/50">
-          View and manage your team's boards. Browse, open, filter, or create a
-          new board.
+          View and manage your team&apos;s boards. Browse, open, filter, or
+          create a new board.
         </p>
       </div>
 

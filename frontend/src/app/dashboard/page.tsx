@@ -6,16 +6,19 @@ import TeamsNavigation from "@/components/dashboard/TeamsNavigation";
 import { Team } from "@/types/Team";
 
 interface PageProps {
-  searchParams: { team?: Team["id"] };
+  searchParams: Promise<{ team?: Team["id"] }>;
 }
 
 const DashboardPage = async ({ searchParams }: PageProps) => {
-  const teams = await getUserTeams();
-  const team = teams.find((t) => t.id === searchParams.team) ?? teams[0];
+  const [teams, { team: searchedTeamId }] = await Promise.all([
+    getUserTeams(),
+    searchParams,
+  ]);
+  const team = teams.find((t) => t.id === searchedTeamId) ?? teams[0];
 
   return (
     <div className="flex w-screen min-h-screen">
-      <TeamsNavigation teamId={searchParams.team} />
+      <TeamsNavigation teamId={searchedTeamId} />
       <div className="w-[calc(100vw-14rem)] bg-background relative">
         <DashboardNavbar />
         {team ? (
