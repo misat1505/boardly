@@ -1,4 +1,6 @@
 import { getBoardById } from "@/actions/teams/getBoardById";
+import Whiteboard from "@/components/WhiteBoard";
+import WhiteboardProvider from "@/context/WhiteboardContext";
 import { notFound } from "next/navigation";
 
 type BoardPageProps = { params: Promise<{ id: string }> };
@@ -10,7 +12,11 @@ const BoardPage = async ({ params }: BoardPageProps) => {
 
   if (!board) notFound();
 
-  return <div>Board {JSON.stringify(board)}</div>;
+  return (
+    <WhiteboardProvider>
+      <Whiteboard />
+    </WhiteboardProvider>
+  );
 };
 
 export default BoardPage;
