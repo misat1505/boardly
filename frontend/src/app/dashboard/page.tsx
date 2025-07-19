@@ -16,7 +16,7 @@ const DashboardPage = async ({ searchParams }: PageProps) => {
   return (
     <div className="flex w-screen min-h-screen">
       <TeamsNavigation teamId={searchParams.team} />
-      <div className="flex-grow bg-background relative">
+      <div className="w-[calc(100vw-14rem)] bg-background relative">
         <DashboardNavbar />
         {team ? (
           <TeamDetails team={team} />
