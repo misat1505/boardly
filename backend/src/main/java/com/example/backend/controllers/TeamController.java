@@ -1,13 +1,8 @@
 package com.example.backend.controllers;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.example.backend.application.services.BoardService;
-import com.example.backend.application.services.TeamService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.example.backend.application.services.BoardService;
+import com.example.backend.application.services.TeamService;
 import com.example.backend.domain.dtos.CreateBoardDTO;
 import com.example.backend.domain.dtos.CreateTeamDTO;
 import com.example.backend.domain.entities.Board;
@@ -65,11 +64,28 @@ public class TeamController {
     Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     if (!(principal instanceof User)) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     Set<Board> boards = boardService.getTeamBoards(teamId);
     return ResponseEntity.ok(boards);
+  }
+
+  @GetMapping("/boards/{boardId}")
+  public ResponseEntity<Board> getBoardById(@PathVariable UUID boardId) {
+    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+    if (!(principal instanceof User)) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    Optional<Board> board = boardService.getBoardById(boardId);
+
+    if (board.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    return ResponseEntity.ok(board.get());
   }
 
   @PostMapping("/{teamId}/boards")

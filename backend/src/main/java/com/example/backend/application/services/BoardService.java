@@ -29,7 +29,7 @@ public class BoardService {
   public Board createBoard(CreateBoardDTO dto) {
     Optional<Team> teamOpt = teamRepository.findById(dto.getTeamId());
     if (teamOpt.isEmpty()) {
-        throw new IllegalArgumentException("Team not found");
+      throw new IllegalArgumentException("Team not found");
     }
 
     Board board = new Board();
@@ -38,5 +38,9 @@ public class BoardService {
     board.setTeam(teamOpt.get());
 
     return boardRepository.save(board);
+  }
+  
+  public Optional<Board> getBoardById(UUID boardId) {
+    return boardRepository.findById(boardId);
   }
 }
