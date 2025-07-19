@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.domain.dtos.CreateBoardDTO;
+import com.example.backend.domain.dtos.UpdateBoardDTO;
 import com.example.backend.domain.entities.Board;
 import com.example.backend.domain.entities.Team;
 import com.example.backend.infrastructure.BoardRepository;
@@ -42,5 +43,15 @@ public class BoardService {
   
   public Optional<Board> getBoardById(UUID boardId) {
     return boardRepository.findById(boardId);
+  }
+
+  public Board updateBoard(UUID boardId, UpdateBoardDTO updateBoardDTO) {
+    Board board = boardRepository.findById(boardId)
+        .orElseThrow(() -> new RuntimeException("Board not found"));
+
+    board.setTitle(updateBoardDTO.getTitle());
+    board.setContent(updateBoardDTO.getContent());
+
+    return boardRepository.save(board);
   }
 }

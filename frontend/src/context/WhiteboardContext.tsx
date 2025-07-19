@@ -116,6 +116,7 @@ const WhiteboardProvider = ({
     shapes,
     position,
     stageRef,
+    board,
   });
 
   const getTransformedPointer = () => {
@@ -132,10 +133,9 @@ const WhiteboardProvider = ({
     const json = board.content;
     if (json) {
       try {
-        const data = JSON.parse(json);
-        const savedShapes = data.shapes as TShape[];
-        if (savedShapes) {
-          const parsedShapes = savedShapes.map((shape) => {
+        const data = JSON.parse(json) as TShape[];
+        if (data) {
+          const parsedShapes = data.map((shape) => {
             if (shape.type === "blank") return new Blank({ ...shape });
             else if (shape.type === "handwrite")
               return new Handwrite({ ...shape });
@@ -147,7 +147,6 @@ const WhiteboardProvider = ({
           });
           setShapes(parsedShapes);
         }
-        if (data.position) setPosition(data.position);
       } catch (err) {
         console.error("Failed to parse saved board", err);
       }

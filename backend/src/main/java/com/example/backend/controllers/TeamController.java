@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.backend.application.services.BoardService;
 import com.example.backend.application.services.TeamService;
 import com.example.backend.domain.dtos.CreateBoardDTO;
+import com.example.backend.domain.dtos.UpdateBoardDTO;
 import com.example.backend.domain.dtos.CreateTeamDTO;
 import com.example.backend.domain.entities.Board;
 import com.example.backend.domain.entities.Team;
@@ -76,7 +78,7 @@ public class TeamController {
     Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     if (!(principal instanceof User)) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     Optional<Board> board = boardService.getBoardById(boardId);
@@ -86,6 +88,19 @@ public class TeamController {
     }
 
     return ResponseEntity.ok(board.get());
+  }
+
+  @PutMapping("/boards/{boardId}")
+  public ResponseEntity<Board> updateBoard(@PathVariable UUID boardId, @RequestBody UpdateBoardDTO updateBoardDTO) {
+    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+    if (!(principal instanceof User)) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    Board board = boardService.updateBoard(boardId, updateBoardDTO);
+
+    return ResponseEntity.ok(board);
   }
 
   @PostMapping("/{teamId}/boards")

@@ -1,5 +1,8 @@
 "use client";
+import { updateBoard } from "@/actions/teams/updateBoard";
 import { LOCAL_STORAGE_KEYS } from "@/constants/localStorageKeys";
+import { Board } from "@/types/Board";
+import { UpdateBoardDTO } from "@/types/dto/UpdateBoardDTO";
 import { Blank, Selection, Shape } from "@/types/shapes";
 import { Stage } from "konva/lib/Stage";
 import { RefObject } from "react";
@@ -8,10 +11,12 @@ export default function usePersistBoard({
   shapes,
   position,
   stageRef,
+  board,
 }: {
   shapes: Shape[];
   position: { x: number; y: number };
   stageRef: RefObject<Stage>;
+  board: Board;
 }) {
   const save = async () => {
     const blob: Blob = await new Promise((resolve, reject) => {
@@ -26,11 +31,10 @@ export default function usePersistBoard({
     const formData = new FormData();
     formData.append("file", blob, "board.png");
 
-    const res = await fetch("/api/upload-image", {
+    await fetch("/api/upload-image", {
       method: "POST",
       body: formData,
     }).then((res) => res.json());
-    const url = res.url;
 
     const savedShapes = [
       ...shapes.filter(
@@ -39,11 +43,11 @@ export default function usePersistBoard({
       new Blank({ id: `blank_${Date.now()}` }),
     ].map((s) => s.jsonify());
 
-    const data = {
-      shapes: savedShapes,
-      position,
+    const data: Partial<UpdateBoardDTO> = {
+      content: JSON.stringify(savedShapes),
     };
-    localStorage.setItem(LOCAL_STORAGE_KEYS.BOARD.name, JSON.stringify(data));
+
+    await updateBoard(board.id, data);
   };
 
   return { save };

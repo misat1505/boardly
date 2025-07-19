@@ -14,15 +14,6 @@ const s3Client = new S3Client({
 const bucketName = process.env.MINIO_BUCKET_NAME!;
 
 export async function POST(request: NextRequest) {
-  console.log({
-    region: "us-east-1",
-    endpoint: process.env.MINIO_ENDPOINT!,
-    credentials: {
-      accessKeyId: process.env.MINIO_ROOT_USER!,
-      secretAccessKey: process.env.MINIO_ROOT_PASSWORD!,
-    },
-    forcePathStyle: true,
-  });
   try {
     const formData = await request.formData();
     const file = formData.get("file");
