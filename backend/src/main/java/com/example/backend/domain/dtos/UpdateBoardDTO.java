@@ -1,14 +1,24 @@
 package com.example.backend.domain.dtos;
 
+import java.util.Optional;
+
 public class UpdateBoardDTO {
-    private String title;
-    private String content;
+    private Optional<String> title = Optional.empty();
+    private Optional<String> content = Optional.empty();
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public Optional<String> getTitle() {
+        return title;
+    }
 
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
+    public void setTitle(Optional<String> title) {
+        this.title = title;
+    }
+
+    public Optional<String> getContent() {
+        return content;
+    }
+
+    public void setContent(Optional<String> content) {
+        this.content = content;
+    }
 }
-
-

@@ -3,6 +3,7 @@ package com.example.backend.application.services;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.time.Instant;
 
 import org.springframework.stereotype.Service;
 
@@ -49,8 +50,9 @@ public class BoardService {
     Board board = boardRepository.findById(boardId)
         .orElseThrow(() -> new RuntimeException("Board not found"));
 
-    board.setTitle(updateBoardDTO.getTitle());
-    board.setContent(updateBoardDTO.getContent());
+    updateBoardDTO.getTitle().ifPresent(board::setTitle);
+    updateBoardDTO.getContent().ifPresent(board::setContent);
+    board.setUpdatedAt(Instant.now());
 
     return boardRepository.save(board);
   }

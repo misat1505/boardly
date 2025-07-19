@@ -45,7 +45,11 @@ public class Board {
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
 
-    public Instant getCreatedAt() { return createdAt; }
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
+    
     public Instant getUpdatedAt() { return updatedAt; }
 
     public Team getTeam() { return team; }
