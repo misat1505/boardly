@@ -1,6 +1,5 @@
 "use client";
 import { updateBoard } from "@/actions/teams/updateBoard";
-import { LOCAL_STORAGE_KEYS } from "@/constants/localStorageKeys";
 import { Board } from "@/types/Board";
 import { UpdateBoardDTO } from "@/types/dto/UpdateBoardDTO";
 import { Blank, Selection, Shape } from "@/types/shapes";
@@ -9,12 +8,10 @@ import { RefObject } from "react";
 
 export default function usePersistBoard({
   shapes,
-  position,
   stageRef,
   board,
 }: {
   shapes: Shape[];
-  position: { x: number; y: number };
   stageRef: RefObject<Stage>;
   board: Board;
 }) {

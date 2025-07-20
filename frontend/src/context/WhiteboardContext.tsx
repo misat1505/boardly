@@ -114,7 +114,6 @@ const WhiteboardProvider = ({
 
   const usePersistBoardValues = usePersistBoard({
     shapes,
-    position,
     stageRef,
     board,
   });
