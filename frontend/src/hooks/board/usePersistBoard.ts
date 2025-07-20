@@ -29,10 +29,12 @@ export default function usePersistBoard({
     formData.append("file", blob, "board.png");
     formData.append("key", `boards/${board.id}/preview.png`);
 
-    await fetch("/api/upload-image", {
-      method: "POST",
-      body: formData,
-    }).then((res) => res.json());
+    const previewUrl = (
+      await fetch("/api/upload-image", {
+        method: "POST",
+        body: formData,
+      }).then((res) => res.json())
+    ).url;
 
     const savedShapes = [
       ...shapes.filter(
@@ -43,6 +45,7 @@ export default function usePersistBoard({
 
     const data: Partial<UpdateBoardDTO> = {
       content: JSON.stringify(savedShapes),
+      previewUrl,
     };
 
     await updateBoard(board.id, data);

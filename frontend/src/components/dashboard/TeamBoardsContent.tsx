@@ -65,15 +65,22 @@ type BoardCardProps = { board: Board };
 const BoardCard = ({ board }: BoardCardProps) => {
   return (
     <Link key={board.id} href={`/b/${board.id}`}>
-      <Card className="border-muted-foreground/20 hover:bg-muted transition-colors">
+      <Card className="border-muted-foreground/20 hover:bg-muted transition-colors h-full">
         <CardContent>
-          <Image
-            src="/board.png"
-            alt={board.title}
-            width={350}
-            height={300}
-            className="bg-background rounded-sm"
-          />
+          {board.previewUrl ? (
+            <Image
+              src={board.previewUrl}
+              alt={board.title}
+              width={350}
+              height={300}
+              className="bg-background rounded-sm"
+            />
+          ) : (
+            <div
+              className="bg-background rounded-sm"
+              style={{ width: 350, height: 175 }}
+            />
+          )}
         </CardContent>
         <CardHeader>
           <CardTitle>{board.title}</CardTitle>
