@@ -25,6 +25,10 @@ const TeamBoardsContent = ({ boards }: TeamBoardsContentProps) => {
     board.title.toLowerCase().includes(text.toLowerCase())
   );
 
+  const sortedBoards = filteredBoards.sort(
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+  );
+
   return (
     <div>
       <div className="flex items-center space-x-4">
@@ -37,12 +41,12 @@ const TeamBoardsContent = ({ boards }: TeamBoardsContentProps) => {
         />
       </div>
       <div className="grid grid-cols-4 gap-4 mt-4 mr-4">
-        {filteredBoards.length > 0 ? (
+        {sortedBoards.length > 0 ? (
           <>
-            {filteredBoards.map((board) => (
+            {sortedBoards.map((board) => (
               <BoardCard key={board.id} board={board} />
             ))}
-            <CreateBoard team={filteredBoards[0].team}>
+            <CreateBoard team={sortedBoards[0].team}>
               <CreateBoardCard />
             </CreateBoard>
           </>
