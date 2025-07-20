@@ -127,7 +127,7 @@ const WhiteboardProvider = ({
     return transform.point(pos);
   };
 
-  useHandlePaste({ getTransformedPointer, setShapes });
+  useHandlePaste({ board, getTransformedPointer, setShapes });
 
   useEffect(() => {
     const json = board.content;

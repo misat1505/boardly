@@ -23,7 +23,6 @@ export async function updateBoard(
       body: JSON.stringify(updateBoardDTO),
     }
   ).then((res) => {
-    console.log(res.status);
     if (!res.ok) redirect("/login");
     return res.json();
   });

@@ -30,6 +30,7 @@ export default function usePersistBoard({
 
     const formData = new FormData();
     formData.append("file", blob, "board.png");
+    formData.append("key", `boards/${board.id}/preview.png`);
 
     await fetch("/api/upload-image", {
       method: "POST",

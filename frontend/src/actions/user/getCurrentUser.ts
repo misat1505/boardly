@@ -8,8 +8,6 @@ export async function getCurrentUser(): Promise<User> {
   const cookiesStore = await cookies();
   const accessToken = cookiesStore.get("accessToken")?.value;
 
-  console.log(accessToken);
-
   const user: User = await fetch(`${process.env.NEXT_APP_API_URL}/auth/me`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,

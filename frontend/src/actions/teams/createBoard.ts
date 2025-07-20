@@ -22,7 +22,6 @@ export async function createBoard(
       body: JSON.stringify(createBoardDTO),
     }
   ).then((res) => {
-    console.log(res.status);
     if (!res.ok) redirect("/login");
     return res.json();
   });

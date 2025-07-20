@@ -1,14 +1,18 @@
 "use client";
 
 import { LOCAL_STORAGE_KEYS } from "@/constants/localStorageKeys";
+import { Board } from "@/types/Board";
 import { Image, Shape, Text } from "@/types/shapes";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
+import { v4 as uuidv4 } from "uuid";
 
 export default function useHandlePaste({
+  board,
   getTransformedPointer,
   setShapes,
 }: {
+  board: Board;
   getTransformedPointer: () => any;
   setShapes: Dispatch<SetStateAction<Shape[]>>;
 }) {
@@ -58,6 +62,7 @@ export default function useHandlePaste({
 
           const formData = new FormData();
           formData.append("file", file);
+          formData.append("key", `boards/${board.id}/images/${uuidv4()}.png`);
 
           const res = await fetch("/api/upload-image", {
             method: "POST",

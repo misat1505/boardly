@@ -16,26 +16,26 @@ const bucketName = process.env.MINIO_BUCKET_NAME!;
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    const file = formData.get("file");
+    const file = formData.get("file") as File;
+    const key = formData.get("key") as string;
 
     if (!(file instanceof File)) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    const filename = `${crypto.randomUUID()}-${file.name}`;
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
     await s3Client.send(
       new PutObjectCommand({
         Bucket: bucketName,
-        Key: filename,
+        Key: key,
         Body: buffer,
         ContentType: file.type,
       })
     );
 
-    const publicUrl = `${process.env.MINIO_ENDPOINT}/${bucketName}/${filename}`;
+    const publicUrl = `${process.env.MINIO_ENDPOINT}/${bucketName}/${key}`;
 
     return NextResponse.json({ url: publicUrl });
   } catch (error) {
