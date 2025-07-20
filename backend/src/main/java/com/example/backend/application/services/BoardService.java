@@ -52,6 +52,7 @@ public class BoardService {
 
     updateBoardDTO.getTitle().ifPresent(board::setTitle);
     updateBoardDTO.getContent().ifPresent(board::setContent);
+    updateBoardDTO.getPreviewUrl().ifPresent(board::setPreviewUrl);
     board.setUpdatedAt(Instant.now());
 
     return boardRepository.save(board);

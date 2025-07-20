@@ -5,6 +5,7 @@ import java.util.Optional;
 public class UpdateBoardDTO {
     private Optional<String> title = Optional.empty();
     private Optional<String> content = Optional.empty();
+    private Optional<String> previewUrl = Optional.empty();
 
     public Optional<String> getTitle() {
         return title;
@@ -20,5 +21,13 @@ public class UpdateBoardDTO {
 
     public void setContent(Optional<String> content) {
         this.content = content;
+    }
+
+    public Optional<String> getPreviewUrl() {
+        return previewUrl;
+    }
+
+    public void setPreviewUrl(Optional<String> previewUrl) {
+        this.previewUrl = previewUrl;
     }
 }

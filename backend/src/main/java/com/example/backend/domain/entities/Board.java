@@ -24,6 +24,9 @@ public class Board {
     @Column(columnDefinition = "jsonb")
     private String content;
 
+    @Column(nullable = true)
+    private String previewUrl;
+
     @CreationTimestamp
     private Instant createdAt;
 
@@ -44,6 +47,9 @@ public class Board {
 
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
+
+    public String getPreviewUrl() { return previewUrl; }
+    public void setPreviewUrl(String previewUrl) { this.previewUrl = previewUrl; }
 
     public Instant getCreatedAt() {
         return createdAt;
