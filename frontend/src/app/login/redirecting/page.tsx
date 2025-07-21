@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { TextShimmerWave } from "@/components/ui/text-shimmer-wave";
 
 export default function RedirectingPage() {
   const router = useRouter();
@@ -14,5 +15,11 @@ export default function RedirectingPage() {
     return () => clearTimeout(timeout);
   }, [router]);
 
-  return <p>Logging in... redirecting you to the app.</p>;
+  return (
+    <main className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <TextShimmerWave duration={1}>
+        Logging in… redirecting you to the app.
+      </TextShimmerWave>
+    </main>
+  );
 }
