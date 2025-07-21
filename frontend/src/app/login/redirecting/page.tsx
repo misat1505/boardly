@@ -18,7 +18,7 @@ export default function RedirectingPage() {
   return (
     <main className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
       <TextShimmerWave duration={1}>
-        Logging in… redirecting you to the app.
+        Just a moment... Taking you to the app.
       </TextShimmerWave>
     </main>
   );
