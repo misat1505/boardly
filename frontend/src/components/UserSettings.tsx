@@ -12,11 +12,14 @@ import {
 import { RiInformation2Line } from "react-icons/ri";
 
 const UserSettings = () => {
-  const { user } = useWhiteboardContext();
+  const { user, board } = useWhiteboardContext();
 
   return (
     <div className="z-10 fixed top-4 right-4 p-2 rounded-md bg-sidebar border-sidebar-border border flex space-x-1 items-center hover:cursor-auto">
-      <h2 className="mr-4">Hello, {user.givenName}</h2>
+      <div className="mr-4 text-right">
+        <h2>{board.title}</h2>
+        <p className="text-xs text-muted-foreground/50">{user.username}</p>
+      </div>
       <ThemeSwitch />
       <div className="">
         <TourTrigger asChild>
