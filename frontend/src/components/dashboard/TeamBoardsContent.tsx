@@ -69,7 +69,9 @@ const BoardCard = ({ board }: BoardCardProps) => {
         <CardContent>
           {board.previewUrl ? (
             <Image
-              src={board.previewUrl}
+              src={`${board.previewUrl}?v=${new Date(
+                board.updatedAt
+              ).getTime()}`}
               alt={board.title}
               width={350}
               height={300}
