@@ -19,6 +19,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { TiTick } from "react-icons/ti";
 import { ImCross } from "react-icons/im";
+import InviteDialog from "./InviteDialog";
 
 type TeamDetailsProps = { team: Team };
 
@@ -34,7 +35,7 @@ const TeamDetails = async ({ team }: TeamDetailsProps) => {
         <TeamBoards team={team} boards={boards} />
       </div>
       <div className="mb-8">
-        <Members members={team.members} />
+        <Members team={team} />
       </div>
     </div>
   );
@@ -86,12 +87,15 @@ const TeamInfo = ({ team, boards }: TeamInfoProps) => {
   );
 };
 
-type MembersProps = { members: Team["members"] };
+type MembersProps = { team: Team };
 
-const Members = ({ members }: MembersProps) => {
+const Members = ({ team }: MembersProps) => {
   return (
     <section className="">
-      <h2 className="text-xl">Members ({members.length})</h2>
+      <div className="flex items-center space-x-4">
+        <h2 className="text-xl">Members ({team.members.length})</h2>
+        <InviteDialog team={team} />
+      </div>
       <Table className="text-muted-foreground">
         <TableHeader>
           <TableRow>
@@ -101,7 +105,7 @@ const Members = ({ members }: MembersProps) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {members.map((user) => (
+          {team.members.map((user) => (
             <TableRow key={user.id}>
               <TableCell className="flex items-center space-x-2">
                 <Avatar>
