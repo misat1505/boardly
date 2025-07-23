@@ -9,13 +9,15 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { FloatingLabelInput } from "../ui/floating-label-input";
-import { buttonVariants } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import { useState } from "react";
 import { useDebounce } from "use-debounce";
 import { useQuery } from "@tanstack/react-query";
 import { searchUsers } from "@/actions/user/searchUsers";
 import { User } from "@/types/User";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { RiUserAddFill } from "react-icons/ri";
+import { inviteUser } from "@/actions/teams/inviteUser";
 
 type InviteDialogProps = { team: Team };
 
@@ -69,7 +71,7 @@ const InviteDialogContent = ({ team }: InviteDialogContentProps) => {
       {filteredUsers.length > 0 && (
         <div className="flex flex-col space-y-2 mt-2">
           {filteredUsers.map((user) => (
-            <SearchItem key={user.id} user={user} />
+            <SearchItem key={user.id} user={user} teamId={team.id} />
           ))}
         </div>
       )}
@@ -97,11 +99,11 @@ const InviteDialogContent = ({ team }: InviteDialogContentProps) => {
   );
 };
 
-type SearchItemProps = { user: User };
+type SearchItemProps = { user: User; teamId: Team["id"] };
 
-const SearchItem = ({ user }: SearchItemProps) => {
+const SearchItem = ({ user, teamId }: SearchItemProps) => {
   return (
-    <div className="flex items-center py-1 px-2 border border-muted-foreground/20 rounded-md">
+    <div className="flex items-center py-1 px-2 border border-muted-foreground/20 rounded-md justify-between">
       <div className="flex items-center space-x-2">
         <Avatar>
           <AvatarImage src={user.imageUrl} />
@@ -112,6 +114,10 @@ const SearchItem = ({ user }: SearchItemProps) => {
           <div className="text-xs text-muted-foreground/50">{user.email}</div>
         </div>
       </div>
+
+      <Button title="Invite" onClick={() => inviteUser(teamId, user.id)}>
+        <RiUserAddFill />
+      </Button>
     </div>
   );
 };
