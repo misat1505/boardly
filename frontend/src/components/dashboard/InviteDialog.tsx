@@ -1,3 +1,4 @@
+"use client";
 import { Team } from "@/types/Team";
 import {
   Dialog,
@@ -9,6 +10,10 @@ import {
 } from "../ui/dialog";
 import { FloatingLabelInput } from "../ui/floating-label-input";
 import { buttonVariants } from "../ui/button";
+import { useState } from "react";
+import { useDebounce } from "use-debounce";
+import { useQuery } from "@tanstack/react-query";
+import { searchUsers } from "@/actions/user/searchUsers";
 
 type InviteDialogProps = { team: Team };
 
@@ -26,9 +31,32 @@ const InviteDialog = ({ team }: InviteDialogProps) => {
           </DialogDescription>
         </DialogHeader>
 
-        <FloatingLabelInput id="invite" label="Search users" />
+        <InviteDialogContent team={team} />
       </DialogContent>
     </Dialog>
+  );
+};
+
+type InviteDialogContentProps = { team: Team };
+
+const InviteDialogContent = ({ team }: InviteDialogContentProps) => {
+  const [searchString, setSearchString] = useState("");
+  const [debouncedValue] = useDebounce(searchString, 300);
+  const { data, isLoading } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => searchUsers(debouncedValue),
+    enabled: !!debouncedValue,
+  });
+
+  return (
+    <div>
+      <FloatingLabelInput
+        id="invite"
+        label="Search users"
+        onChange={(e) => setSearchString(e.target.value)}
+      />
+      <pre>{JSON.stringify(data, null, 2)}</pre>
+    </div>
   );
 };
 
