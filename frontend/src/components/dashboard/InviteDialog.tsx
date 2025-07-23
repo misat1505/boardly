@@ -14,6 +14,8 @@ import { useState } from "react";
 import { useDebounce } from "use-debounce";
 import { useQuery } from "@tanstack/react-query";
 import { searchUsers } from "@/actions/user/searchUsers";
+import { User } from "@/types/User";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 type InviteDialogProps = { team: Team };
 
@@ -42,11 +44,14 @@ type InviteDialogContentProps = { team: Team };
 const InviteDialogContent = ({ team }: InviteDialogContentProps) => {
   const [searchString, setSearchString] = useState("");
   const [debouncedValue] = useDebounce(searchString, 300);
-  const { data, isLoading } = useQuery({
-    queryKey: ["users"],
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["users-search", { debouncedValue }],
     queryFn: () => searchUsers(debouncedValue),
     enabled: !!debouncedValue,
   });
+
+  const memberIds = new Set(team.members.map((member) => member.id));
+  const filteredUsers = (data ?? []).filter((user) => !memberIds.has(user.id));
 
   return (
     <div>
@@ -55,7 +60,58 @@ const InviteDialogContent = ({ team }: InviteDialogContentProps) => {
         label="Search users"
         onChange={(e) => setSearchString(e.target.value)}
       />
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      {isLoading && (
+        <div className="text-sm text-muted-foreground text-center mt-4">
+          Searching...
+        </div>
+      )}
+
+      {filteredUsers.length > 0 && (
+        <div className="flex flex-col space-y-2 mt-2">
+          {filteredUsers.map((user) => (
+            <SearchItem key={user.id} user={user} />
+          ))}
+        </div>
+      )}
+
+      {data && filteredUsers.length === 0 && (
+        <div className="text-sm text-muted-foreground text-center mt-4">
+          {data.length === 0
+            ? "No users found."
+            : "All found users are already in the team."}
+        </div>
+      )}
+
+      {!debouncedValue && !isLoading && (
+        <div className="text-sm text-muted-foreground/50 text-center mt-4">
+          Start typing to search for users.
+        </div>
+      )}
+
+      {isError && (
+        <div className="text-sm text-red-500 text-center mt-4">
+          Something went wrong.
+        </div>
+      )}
+    </div>
+  );
+};
+
+type SearchItemProps = { user: User };
+
+const SearchItem = ({ user }: SearchItemProps) => {
+  return (
+    <div className="flex items-center py-1 px-2 border border-muted-foreground/20 rounded-md">
+      <div className="flex items-center space-x-2">
+        <Avatar>
+          <AvatarImage src={user.imageUrl} />
+          <AvatarFallback>{user.username.toUpperCase()[0]}</AvatarFallback>
+        </Avatar>
+        <div>
+          <div>{user.username}</div>
+          <div className="text-xs text-muted-foreground/50">{user.email}</div>
+        </div>
+      </div>
     </div>
   );
 };
