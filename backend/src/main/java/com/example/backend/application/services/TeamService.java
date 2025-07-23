@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.domain.dtos.CreateTeamDTO;
+import com.example.backend.domain.dtos.InviteUserToTeamDTO;
 import com.example.backend.domain.entities.Team;
 import com.example.backend.domain.entities.User;
 import com.example.backend.infrastructure.TeamRepository;
@@ -43,6 +44,21 @@ public class TeamService {
     userRepository.save(managedUser);
 
     return savedTeam;
-}
+  }
+
+  public void inviteUserToTeam(UUID teamId, InviteUserToTeamDTO inviteUserToTeamDTO) {
+    UUID userId = inviteUserToTeamDTO.getUserId();
+
+    Team team = teamRepository.findById(teamId)
+      .orElseThrow(() -> new RuntimeException("Team not found"));
+
+    User user = userRepository.findById(userId)
+      .orElseThrow(() -> new RuntimeException("User not found"));
+
+    if (!team.getMembers().contains(user)) {
+      team.getMembers().add(user);
+      teamRepository.save(team);
+    }
+  }
 
 }

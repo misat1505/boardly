@@ -23,5 +23,7 @@ export async function createTeam(createTeamDTO: CreateTeamDTO): Promise<Team> {
 
   revalidatePath("/dashboard");
 
+  redirect(`/dashboard?team=${team.id}`);
+
   return team;
 }

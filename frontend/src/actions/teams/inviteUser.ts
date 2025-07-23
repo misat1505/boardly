@@ -18,7 +18,7 @@ export async function inviteUser(teamId: Team["id"], userId: User["id"]) {
     body: JSON.stringify({ userId }),
   }).then((res) => {
     if (!res.ok) redirect("/login");
-    return res.json();
+    return res.text();
   });
 
   revalidatePath("/dashboard");

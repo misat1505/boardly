@@ -20,6 +20,7 @@ import com.example.backend.application.services.TeamService;
 import com.example.backend.domain.dtos.CreateBoardDTO;
 import com.example.backend.domain.dtos.UpdateBoardDTO;
 import com.example.backend.domain.dtos.CreateTeamDTO;
+import com.example.backend.domain.dtos.InviteUserToTeamDTO;
 import com.example.backend.domain.entities.Board;
 import com.example.backend.domain.entities.Team;
 import com.example.backend.domain.entities.User;
@@ -33,8 +34,8 @@ public class TeamController {
   private final BoardService boardService;
 
     public TeamController(TeamService teamService, BoardService boardService) {
-        this.teamService = teamService;
-        this.boardService = boardService;
+      this.teamService = teamService;
+      this.boardService = boardService;
     }
 
   @GetMapping
@@ -108,11 +109,24 @@ public class TeamController {
     Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     if (!(principal instanceof User)) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     dto.setTeamId(teamId);
     Board board = boardService.createBoard(dto);
     return ResponseEntity.status(HttpStatus.CREATED).body(board);
+  }
+
+  @PostMapping("/{teamId}/invite")
+  public ResponseEntity<String> inviteUserToTeam(@PathVariable UUID teamId, @RequestBody InviteUserToTeamDTO dto) {
+    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+    if (!(principal instanceof User)) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    teamService.inviteUserToTeam(teamId, dto);
+
+    return ResponseEntity.status(HttpStatus.CREATED).body("User invited");
   }
 }
