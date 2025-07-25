@@ -9,14 +9,14 @@ const httpServer = createServer();
 
 const io = new SocketIOServer(httpServer, {
   cors: {
-    origin: process.env.FRONTEND_UL,
+    origin: process.env.FRONTEND_URL,
     methods: ["GET", "POST"],
   },
 });
 
 io.on("connection", (socket) => {
   socket.on(Events.SEND_BOARD, (board, room) => {
-    socket.to(room).emit(Events.RECEIVE_ROOM, board);
+    socket.to(room).emit(Events.RECEIVE_BOARD, board);
   });
 
   socket.on(Events.JOIN_ROOM, async (room) => {

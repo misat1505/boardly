@@ -2,6 +2,7 @@
 import { LOCAL_STORAGE_KEYS } from "@/constants/localStorageKeys";
 import useHandlePaste from "@/hooks/board/useHandlePaste";
 import usePersistBoard from "@/hooks/board/usePersistBoard";
+import { useWebsocket } from "@/hooks/board/useWebsocket";
 import { Board } from "@/types/Board";
 import { BoardMode } from "@/types/BoardMode";
 import { Cursor } from "@/types/Cursor";
@@ -110,12 +111,15 @@ const WhiteboardProvider = ({
   const [mode, setMode] = useState<BoardMode>(BoardMode.MOVING);
   const isDrawing = useRef(false);
 
+  const { sendBoard } = useWebsocket(board.id, loadBoard);
+
   const stageRef = useRef<any>(null);
 
   const usePersistBoardValues = usePersistBoard({
     shapes,
     stageRef,
     board,
+    sendBoard,
   });
 
   const getTransformedPointer = () => {
@@ -128,8 +132,7 @@ const WhiteboardProvider = ({
 
   useHandlePaste({ board, getTransformedPointer, setShapes });
 
-  useEffect(() => {
-    const json = board.content;
+  function loadBoard(json: Board["content"]) {
     if (json) {
       try {
         const data = JSON.parse(json) as TShape[];
@@ -150,6 +153,10 @@ const WhiteboardProvider = ({
         console.error("Failed to parse saved board", err);
       }
     }
+  }
+
+  useEffect(() => {
+    loadBoard(board.content);
   }, []);
 
   const handleMouseDown = () => {
