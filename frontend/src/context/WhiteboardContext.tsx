@@ -111,7 +111,23 @@ const WhiteboardProvider = ({
   const [mode, setMode] = useState<BoardMode>(BoardMode.MOVING);
   const isDrawing = useRef(false);
 
-  const { sendBoard } = useWebsocket(board.id, loadBoard);
+  const { sendBoard } = useWebsocket(board.id, (newData) => {
+    const socketShapes = JSON.parse(newData) as TShape[];
+
+    const parsedShapes = socketShapes.map((shape) => {
+      if (shape.type === "blank") return new Blank({ ...shape });
+      else if (shape.type === "handwrite") return new Handwrite({ ...shape });
+      else if (shape.type === "rect") return new Rectangle({ ...shape });
+      else if (shape.type === "selection") return new Selection({ ...shape });
+      else if (shape.type === "image") return new Image({ ...shape });
+      else return new Text({ ...shape });
+    });
+
+    setShapes((prev) => [
+      ...parsedShapes.filter((shape) => !prev.some((s) => s.id === shape.id)),
+      ...prev,
+    ]);
+  });
 
   const stageRef = useRef<any>(null);
 
@@ -121,6 +137,23 @@ const WhiteboardProvider = ({
     board,
     sendBoard,
   });
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const savedShapes = [
+        ...shapes.filter(
+          (s) => !(s instanceof Blank) && !(s instanceof Selection)
+        ),
+        new Blank({ id: `blank_${Date.now()}` }),
+      ].map((s) => s.jsonify());
+
+      console.log("sending", JSON.stringify(savedShapes, null, 2));
+
+      sendBoard(JSON.stringify(savedShapes));
+    }, 5 * 1000);
+
+    return () => clearInterval(intervalId);
+  }, [shapes]);
 
   const getTransformedPointer = () => {
     const stage = stageRef.current;

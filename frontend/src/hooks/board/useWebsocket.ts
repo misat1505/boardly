@@ -11,7 +11,10 @@ export const useWebsocket = (
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    const socket = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL);
+    const socket = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL, {
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
     socketRef.current = socket;
 
     socket.emit(WebsocketEvents.JOIN_ROOM, room);

@@ -4,7 +4,7 @@ import { Board } from "@/types/Board";
 import { UpdateBoardDTO } from "@/types/dto/UpdateBoardDTO";
 import { Blank, Selection, Shape } from "@/types/shapes";
 import { Stage } from "konva/lib/Stage";
-import { RefObject } from "react";
+import { RefObject, useEffect } from "react";
 
 export default function usePersistBoard({
   shapes,
