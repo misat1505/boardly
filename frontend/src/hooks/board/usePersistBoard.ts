@@ -15,7 +15,7 @@ export default function usePersistBoard({
   shapes: Shape[];
   stageRef: RefObject<Stage>;
   board: Board;
-  sendBoard: (board: Board["content"]) => void;
+  sendBoard: (board: Board["content"], room: Board["id"]) => void;
 }) {
   const save = async () => {
     const blob: Blob = await new Promise((resolve, reject) => {
@@ -52,7 +52,7 @@ export default function usePersistBoard({
 
     await updateBoard(board.id, data);
 
-    sendBoard(data.content!);
+    sendBoard(data.content!, board.id);
   };
 
   return { save };

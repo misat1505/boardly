@@ -2,7 +2,7 @@
 import { LOCAL_STORAGE_KEYS } from "@/constants/localStorageKeys";
 import useHandlePaste from "@/hooks/board/useHandlePaste";
 import usePersistBoard from "@/hooks/board/usePersistBoard";
-import { useWebsocket } from "@/hooks/board/useWebsocket";
+import { websocketClient } from "@/lib/websocket-client";
 import { Board } from "@/types/Board";
 import { BoardMode } from "@/types/BoardMode";
 import { Cursor } from "@/types/Cursor";
@@ -111,23 +111,29 @@ const WhiteboardProvider = ({
   const [mode, setMode] = useState<BoardMode>(BoardMode.MOVING);
   const isDrawing = useRef(false);
 
-  const { sendBoard } = useWebsocket(board.id, (newData) => {
-    const socketShapes = JSON.parse(newData) as TShape[];
+  useEffect(() => {
+    websocketClient.joinRoom(board.id);
 
-    const parsedShapes = socketShapes.map((shape) => {
-      if (shape.type === "blank") return new Blank({ ...shape });
-      else if (shape.type === "handwrite") return new Handwrite({ ...shape });
-      else if (shape.type === "rect") return new Rectangle({ ...shape });
-      else if (shape.type === "selection") return new Selection({ ...shape });
-      else if (shape.type === "image") return new Image({ ...shape });
-      else return new Text({ ...shape });
+    websocketClient.onReceiveMessage((newData) => {
+      const socketShapes = JSON.parse(newData) as TShape[];
+
+      const parsedShapes = socketShapes.map((shape) => {
+        if (shape.type === "blank") return new Blank({ ...shape });
+        else if (shape.type === "handwrite") return new Handwrite({ ...shape });
+        else if (shape.type === "rect") return new Rectangle({ ...shape });
+        else if (shape.type === "selection") return new Selection({ ...shape });
+        else if (shape.type === "image") return new Image({ ...shape });
+        else return new Text({ ...shape });
+      });
+
+      setShapes((prev) => [
+        ...parsedShapes.filter((shape) => !prev.some((s) => s.id === shape.id)),
+        ...prev,
+      ]);
     });
 
-    setShapes((prev) => [
-      ...parsedShapes.filter((shape) => !prev.some((s) => s.id === shape.id)),
-      ...prev,
-    ]);
-  });
+    return () => websocketClient.leaveRoom(board.id);
+  }, []);
 
   const stageRef = useRef<any>(null);
 
@@ -135,7 +141,7 @@ const WhiteboardProvider = ({
     shapes,
     stageRef,
     board,
-    sendBoard,
+    sendBoard: websocketClient.sendBoard,
   });
 
   useEffect(() => {
@@ -149,7 +155,7 @@ const WhiteboardProvider = ({
 
       console.log("sending", JSON.stringify(savedShapes, null, 2));
 
-      sendBoard(JSON.stringify(savedShapes));
+      websocketClient.sendBoard(JSON.stringify(savedShapes), board.id);
     }, 5 * 1000);
 
     return () => clearInterval(intervalId);
