@@ -123,7 +123,6 @@ const WhiteboardProvider = ({
     websocketClient.joinRoom(board.id);
 
     websocketClient.onReceiveMessage((newData) => {
-      console.log("received", newData);
       const parsedShapes = parseBoard(newData);
 
       setShapes((prev) => [
@@ -141,7 +140,7 @@ const WhiteboardProvider = ({
     shapes,
     stageRef,
     board,
-    sendBoard: websocketClient.sendBoard,
+    sendBoard: websocketClient.sendBoard.bind(websocketClient),
   });
 
   useEffect(() => {
@@ -153,15 +152,10 @@ const WhiteboardProvider = ({
         new Blank({ id: `blank_${Date.now()}` }),
       ].map((s) => s.jsonify());
 
-      console.log("sending", JSON.stringify(savedShapes, null, 2));
-
       websocketClient.sendBoard(JSON.stringify(savedShapes), board.id);
     }, 5 * 1000);
 
-    return () => {
-      console.log("clearing interval", intervalId);
-      clearInterval(intervalId);
-    };
+    return () => clearInterval(intervalId);
   }, []);
 
   const getTransformedPointer = () => {
@@ -175,7 +169,7 @@ const WhiteboardProvider = ({
   useHandlePaste({ board, getTransformedPointer, setShapes });
 
   useEffect(() => {
-    parseBoard(board.content);
+    setShapes(parseBoard(board.content));
   }, []);
 
   const handleMouseDown = () => {

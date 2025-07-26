@@ -21,12 +21,10 @@ class WebsocketClient {
   }
 
   joinRoom(room: Room) {
-    console.log("join room", room);
     this.socket.emit(WebsocketEvents.JOIN_ROOM, room);
   }
 
   leaveRoom(room: Room) {
-    console.log("leave room", room);
     this.socket.emit(WebsocketEvents.LEAVE_ROOM, room);
   }
 
