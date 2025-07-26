@@ -63,7 +63,7 @@ const WhiteBoardTools = () => {
       <Button
         onClick={() => {
           save();
-          toast("Board saved.");
+          toast("Board saved successfully.");
         }}
         title="save"
         className="hover:cursor-pointer mt-20"
