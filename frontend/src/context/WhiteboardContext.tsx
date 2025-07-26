@@ -19,7 +19,9 @@ import {
 } from "@/types/shapes";
 import { User } from "@/types/User";
 import { detectCollisions } from "@/utils/detectCollisions";
+import { parseBoard } from "@/utils/parseBoard";
 import { KonvaEventObject, Node, NodeConfig } from "konva/lib/Node";
+import { Stage } from "konva/lib/Stage";
 import {
   createContext,
   Dispatch,
@@ -111,20 +113,18 @@ const WhiteboardProvider = ({
   const [mode, setMode] = useState<BoardMode>(BoardMode.MOVING);
   const isDrawing = useRef(false);
 
+  const shapesRef = useRef(shapes);
+
+  useEffect(() => {
+    shapesRef.current = shapes;
+  }, [shapes]);
+
   useEffect(() => {
     websocketClient.joinRoom(board.id);
 
     websocketClient.onReceiveMessage((newData) => {
-      const socketShapes = JSON.parse(newData) as TShape[];
-
-      const parsedShapes = socketShapes.map((shape) => {
-        if (shape.type === "blank") return new Blank({ ...shape });
-        else if (shape.type === "handwrite") return new Handwrite({ ...shape });
-        else if (shape.type === "rect") return new Rectangle({ ...shape });
-        else if (shape.type === "selection") return new Selection({ ...shape });
-        else if (shape.type === "image") return new Image({ ...shape });
-        else return new Text({ ...shape });
-      });
+      console.log("received", newData);
+      const parsedShapes = parseBoard(newData);
 
       setShapes((prev) => [
         ...parsedShapes.filter((shape) => !prev.some((s) => s.id === shape.id)),
@@ -135,7 +135,7 @@ const WhiteboardProvider = ({
     return () => websocketClient.leaveRoom(board.id);
   }, []);
 
-  const stageRef = useRef<any>(null);
+  const stageRef = useRef<Stage>({} as Stage);
 
   const usePersistBoardValues = usePersistBoard({
     shapes,
@@ -147,7 +147,7 @@ const WhiteboardProvider = ({
   useEffect(() => {
     const intervalId = setInterval(() => {
       const savedShapes = [
-        ...shapes.filter(
+        ...shapesRef.current.filter(
           (s) => !(s instanceof Blank) && !(s instanceof Selection)
         ),
         new Blank({ id: `blank_${Date.now()}` }),
@@ -158,44 +158,24 @@ const WhiteboardProvider = ({
       websocketClient.sendBoard(JSON.stringify(savedShapes), board.id);
     }, 5 * 1000);
 
-    return () => clearInterval(intervalId);
-  }, [shapes]);
+    return () => {
+      console.log("clearing interval", intervalId);
+      clearInterval(intervalId);
+    };
+  }, []);
 
   const getTransformedPointer = () => {
     const stage = stageRef.current;
     const transform = stage.getAbsoluteTransform().copy();
     transform.invert();
     const pos = stage.getPointerPosition();
-    return transform.point(pos);
+    return transform.point(pos!);
   };
 
   useHandlePaste({ board, getTransformedPointer, setShapes });
 
-  function loadBoard(json: Board["content"]) {
-    if (json) {
-      try {
-        const data = JSON.parse(json) as TShape[];
-        if (data) {
-          const parsedShapes = data.map((shape) => {
-            if (shape.type === "blank") return new Blank({ ...shape });
-            else if (shape.type === "handwrite")
-              return new Handwrite({ ...shape });
-            else if (shape.type === "rect") return new Rectangle({ ...shape });
-            else if (shape.type === "selection")
-              return new Selection({ ...shape });
-            else if (shape.type === "image") return new Image({ ...shape });
-            else return new Text({ ...shape });
-          });
-          setShapes(parsedShapes);
-        }
-      } catch (err) {
-        console.error("Failed to parse saved board", err);
-      }
-    }
-  }
-
   useEffect(() => {
-    loadBoard(board.content);
+    parseBoard(board.content);
   }, []);
 
   const handleMouseDown = () => {
@@ -350,8 +330,8 @@ const WhiteboardProvider = ({
     const pointer = stage.getPointerPosition();
 
     const mousePointTo = {
-      x: (pointer.x - position.x) / oldScale,
-      y: (pointer.y - position.y) / oldScale,
+      x: (pointer!.x - position.x) / oldScale,
+      y: (pointer!.y - position.y) / oldScale,
     };
 
     const direction = e.evt.deltaY > 0 ? 1 : -1;
@@ -359,8 +339,8 @@ const WhiteboardProvider = ({
     setScale(newScale);
 
     const newPos = {
-      x: pointer.x - mousePointTo.x * newScale,
-      y: pointer.y - mousePointTo.y * newScale,
+      x: pointer!.x - mousePointTo.x * newScale,
+      y: pointer!.y - mousePointTo.y * newScale,
     };
     setPosition(newPos);
   }
