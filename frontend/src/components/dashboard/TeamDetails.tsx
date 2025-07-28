@@ -2,15 +2,11 @@ import { Team } from "@/types/Team";
 import TeamBoards from "./TeamBoards";
 import { Badge } from "../ui/badge";
 import { BadgeCheckIcon } from "lucide-react";
-import Link from "next/link";
-import { buttonVariants } from "../ui/button";
-import { cn } from "@/lib/utils";
 import { Board } from "@/types/Board";
 import { getTeamBoards } from "@/actions/teams/getTeamBoards";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -20,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { TiTick } from "react-icons/ti";
 import { ImCross } from "react-icons/im";
 import InviteDialog from "./InviteDialog";
+import UpgradeTeam from "../payments/UpgradeTeam";
 
 type TeamDetailsProps = { team: Team };
 
@@ -70,19 +67,7 @@ const TeamInfo = ({ team, boards }: TeamInfoProps) => {
           </Badge>
         </div>
       </div>
-      {!team.isUpgraded ? (
-        <Link
-          className={cn(
-            buttonVariants({
-              variant: "link",
-            }),
-            "text-yellow-600 text-xs p-0 h-fit"
-          )}
-          href="#"
-        >
-          Upgrade your team to create as many boards as you need—no limits!
-        </Link>
-      ) : null}
+      {!team.isUpgraded ? <UpgradeTeam team={team} /> : null}
     </div>
   );
 };

@@ -18,7 +18,15 @@ const UpgradeTeam = ({ team }: UpgradeTeamProps) => {
     await stripe?.redirectToCheckout({ sessionId: sessionId });
   };
 
-  return <Button onClick={handleUpgrade}>Upgrade {team.name}</Button>;
+  return (
+    <Button
+      variant="link"
+      className="text-yellow-600 text-xs p-0 h-fit"
+      onClick={handleUpgrade}
+    >
+      Upgrade your team to create as many boards as you need—no limits!
+    </Button>
+  );
 };
 
 export default UpgradeTeam;
