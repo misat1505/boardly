@@ -1,9 +1,15 @@
 "use client";
+
 import { TextShimmerWave } from "@/components/ui/text-shimmer-wave";
-import { Player } from "@lottiefiles/react-lottie-player";
 import animationData from "./success-check.json";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
+
+const Player = dynamic(
+  () => import("@lottiefiles/react-lottie-player").then((mod) => mod.Player),
+  { ssr: false }
+);
 
 const SuccessfulPaymentPage = () => {
   const router = useRouter();
@@ -17,7 +23,7 @@ const SuccessfulPaymentPage = () => {
   }, [router]);
 
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col ">
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col">
       <Player
         autoplay
         loop={false}

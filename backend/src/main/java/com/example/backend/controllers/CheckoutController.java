@@ -30,8 +30,8 @@ public class CheckoutController {
 
         SessionCreateParams params = SessionCreateParams.builder()
             .setMode(SessionCreateParams.Mode.PAYMENT)
-            .setSuccessUrl("http://localhost:3000/success")
-            .setCancelUrl("http://localhost:3000/cancel")
+            .setSuccessUrl("http://localhost:3000/payments/success")
+            .setCancelUrl("http://localhost:3000/payments/cancel")
             .setCustomerEmail(user.getEmail())
             .addLineItem(
                 SessionCreateParams.LineItem.builder()
