@@ -17,7 +17,7 @@ export async function upgradeTeam(team: Team): Promise<string> {
       },
       body: JSON.stringify({
         name: `${team.name} premium`,
-        price: 2000,
+        price: 60,
       }),
     }
   );
