@@ -18,6 +18,8 @@ import com.example.backend.domain.entities.User;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
+import com.stripe.model.EventDataObjectDeserializer;
+import com.stripe.model.PaymentIntent;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 import com.stripe.param.checkout.SessionCreateParams;
@@ -47,6 +49,13 @@ public class CheckoutController {
             .setSuccessUrl("http://localhost:3000/payments/success")
             .setCancelUrl("http://localhost:3000/payments/cancel")
             .setCustomerEmail(user.getEmail())
+            .setPaymentIntentData(
+                SessionCreateParams.PaymentIntentData.builder()
+                    .putMetadata("userId", user.getId().toString())
+                    .putMetadata("productName", productName)
+                    .putMetadata("checkout_session_id", "auto")
+                    .build()
+            )
             .addLineItem(
                 SessionCreateParams.LineItem.builder()
                     .setQuantity(1L)
@@ -62,7 +71,7 @@ public class CheckoutController {
                             .build()
                     )
                     .build()
-            )
+                )
             .build();
 
         Session session = Session.create(params);
@@ -95,6 +104,7 @@ public class CheckoutController {
         switch (event.getType()) {
             case "payment_intent.succeeded":
                 System.out.println("✅ Payment succeeded");
+                System.out.println(event);
                 break;
             case "payment_intent.payment_failed":
                 System.out.println("❌ Payment failed");
