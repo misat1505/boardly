@@ -31,6 +31,12 @@ services:
     volumes:
       - minio-data:/data
 
+  socket:
+    build:
+      context: ./websocket
+    ports:
+      - "5000:5000"
+
 volumes:
   database-data:
   minio-data:
