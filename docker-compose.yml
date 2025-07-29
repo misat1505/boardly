@@ -47,7 +47,7 @@ services:
       STRIPE_API_KEY: ${STRIPE_SECRET_KEY}
     entrypoint: /bin/sh
     command: >
-      -c "stripe listen --api-key ${STRIPE_SECRET_KEY} --forward-to localhost:8080/payments/webhook"
+      -c "stripe listen --api-key ${STRIPE_SECRET_KEY} --forward-to host.docker.internal:8080/checkout/webhook"
 
 volumes:
   database-data:
