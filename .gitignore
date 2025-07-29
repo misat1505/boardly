@@ -1,2 +1,3 @@
 /websocket/node_modules
 /websocket/.env
+.env

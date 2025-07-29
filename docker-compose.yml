@@ -6,11 +6,11 @@ services:
     image: postgres:15-alpine
     restart: always
     environment:
-      POSTGRES_DB: boardly
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:${DB_PORT}"
     volumes:
       - database-data:/var/lib/postgresql/data
     healthcheck:
@@ -22,12 +22,12 @@ services:
   minio:
     image: minio/minio:latest
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "${MINIO_PORT}:${MINIO_PORT}"
+      - "${MINIO_UI_PORT}:${MINIO_UI_PORT}"
     environment:
       MINIO_ROOT_USER: admin
       MINIO_ROOT_PASSWORD: password
-    command: server /data --console-address ":9001"
+    command: server /data --console-address ":${MINIO_UI_PORT}"
     volumes:
       - minio-data:/data
 
@@ -35,7 +35,10 @@ services:
     build:
       context: ./websocket
     ports:
-      - "5000:5000"
+      - "${WEBSOCKET_PORT}:${WEBSOCKET_PORT}"
+    environment:
+      - PORT=${WEBSOCKET_PORT}
+      - FRONTEND_URL=${FRONTEND_URL}
 
 volumes:
   database-data:
