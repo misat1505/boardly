@@ -20,9 +20,7 @@ import com.example.backend.domain.entities.User;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
-import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
-import com.stripe.param.checkout.SessionCreateParams;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -32,6 +30,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class CheckoutController {
     @Value("${stripe.webhook.secret}")
     private String endpointSecret;
+
     private final CheckoutService checkoutService;
 
     public CheckoutController(CheckoutService checkoutService) {
