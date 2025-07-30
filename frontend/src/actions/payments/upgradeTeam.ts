@@ -1,9 +1,9 @@
 "use server";
 
-import { Team } from "@/types/Team";
+import { PaymentDTO } from "@/types/dto/PaymentDTO";
 import { cookies } from "next/headers";
 
-export async function upgradeTeam(team: Team): Promise<string> {
+export async function handlePayment(paymentDTO: PaymentDTO): Promise<string> {
   const cookiesStore = await cookies();
   const accessToken = cookiesStore.get("accessToken")?.value;
 
@@ -15,10 +15,7 @@ export async function upgradeTeam(team: Team): Promise<string> {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        name: `${team.name} premium`,
-        price: 60,
-      }),
+      body: JSON.stringify(paymentDTO),
     }
   );
 
