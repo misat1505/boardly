@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
+import GoPro from "./GoPro";
 
 const DashboardNavbar = async () => {
   const user = await getCurrentUser();
@@ -42,7 +43,7 @@ const DashboardNavbar = async () => {
               </h2>
               <h2 className="text-xs text-center px-1 pb-1">{user.email}</h2>
               <DropdownMenuItem>Preferences</DropdownMenuItem>
-              <DropdownMenuItem>Go Pro</DropdownMenuItem>
+              <GoPro user={user} />
               <DropdownMenuItem>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

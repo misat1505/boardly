@@ -3,7 +3,7 @@
 import { Team } from "@/types/Team";
 import { Button } from "../ui/button";
 import { loadStripe } from "@stripe/stripe-js";
-import { handlePayment } from "@/actions/payments/upgradeTeam";
+import { handlePayment } from "@/actions/payments/handlePayment";
 import { Payment } from "@/types/payments/Payment";
 
 type UpgradeTeamProps = { team: Team };
