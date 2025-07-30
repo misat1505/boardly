@@ -1,4 +1,4 @@
 export enum Payment {
-  UPGRADE_TEAM = "upgrade-team",
-  UPGRADE_USER = "upgrade-user",
+  UPGRADE_TEAM = "UPGRADE_TEAM",
+  UPGRADE_USER = "UPGRADE_USER",
 }

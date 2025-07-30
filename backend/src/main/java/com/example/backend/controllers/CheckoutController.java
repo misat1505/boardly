@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.backend.application.services.CheckoutService;
+import com.example.backend.domain.dtos.PaymentDTO;
 import com.example.backend.domain.entities.User;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
@@ -30,50 +32,22 @@ import jakarta.servlet.http.HttpServletRequest;
 public class CheckoutController {
     @Value("${stripe.webhook.secret}")
     private String endpointSecret;
+    private final CheckoutService checkoutService;
+
+    public CheckoutController(CheckoutService checkoutService) {
+        this.checkoutService = checkoutService;
+    }
 
     @PostMapping("/create-checkout-session")
-    public ResponseEntity<Map<String, String>> createCheckoutSession(@RequestBody Map<String, Object> data) throws StripeException {
+    public ResponseEntity<Map<String, String>> createCheckoutSession(@RequestBody PaymentDTO data) throws StripeException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (!(principal instanceof User user)) {
           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String productName = data.get("name").toString();
-        long price = Long.parseLong(data.get("price").toString());
-
-        SessionCreateParams params = SessionCreateParams.builder()
-            .setMode(SessionCreateParams.Mode.PAYMENT)
-            .setSuccessUrl("http://localhost:3000/payments/success")
-            .setCancelUrl("http://localhost:3000/payments/cancel")
-            .setCustomerEmail(user.getEmail())
-            .setPaymentIntentData(
-                SessionCreateParams.PaymentIntentData.builder()
-                    .putMetadata("userId", user.getId().toString())
-                    .putMetadata("productName", productName)
-                    .putMetadata("checkout_session_id", "auto")
-                    .build()
-            )
-            .addLineItem(
-                SessionCreateParams.LineItem.builder()
-                    .setQuantity(1L)
-                    .setPriceData(
-                        SessionCreateParams.LineItem.PriceData.builder()
-                            .setCurrency("usd")
-                            .setUnitAmount(price)
-                            .setProductData(
-                                SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                    .setName(productName)
-                                    .build()
-                            )
-                            .build()
-                    )
-                    .build()
-                )
-            .build();
-
-        Session session = Session.create(params);
-        return ResponseEntity.ok(Map.of("id", session.getId()));
+        String sessionId = checkoutService.createCheckoutSession(data, user);
+        return ResponseEntity.ok(Map.of("id", sessionId));
     }
 
     @PostMapping("/webhook")
