@@ -2,31 +2,18 @@
 import { Board } from "@/types/Board";
 import { CreateBoardDTO } from "@/types/dto/CreateBoardDTO";
 import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { api } from "../base";
 
 export async function createBoard(
   createBoardDTO: CreateBoardDTO
 ): Promise<Board> {
-  const cookiesStore = await cookies();
-  const accessToken = cookiesStore.get("accessToken")?.value;
-
-  const board: Board = await fetch(
-    `${process.env.NEXT_APP_API_URL}/teams/${createBoardDTO.teamId}/boards`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify(createBoardDTO),
-    }
-  ).then((res) => {
-    if (!res.ok) redirect("/login");
-    return res.json();
-  });
+  const client = await api({ attachAccessToken: true });
+  const res = await client.post(
+    `/teams/${createBoardDTO.teamId}/boards`,
+    createBoardDTO
+  );
 
   revalidatePath("/dashboard");
 
-  return board;
+  return res.data;
 }

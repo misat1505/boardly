@@ -1,11 +1,11 @@
 "use server";
 
 import { User } from "@/types/User";
+import { api } from "../base";
 
 export async function searchUsers(searchString: string): Promise<User[]> {
-  const users: User[] = await fetch(
-    `${process.env.NEXT_APP_API_URL}/users/search?q=${searchString}`
-  ).then((res) => res.json());
+  const client = await api();
+  const res = await client.get(`/users/search?q=${searchString}`);
 
-  return users;
+  return res.data;
 }

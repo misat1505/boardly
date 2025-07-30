@@ -4,30 +4,16 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { UpdateBoardDTO } from "@/types/dto/UpdateBoardDTO";
+import { api } from "../base";
 
 export async function updateBoard(
   id: Board["id"],
   updateBoardDTO: Partial<UpdateBoardDTO>
 ): Promise<Board> {
-  const cookiesStore = await cookies();
-  const accessToken = cookiesStore.get("accessToken")?.value;
-
-  const board: Board = await fetch(
-    `${process.env.NEXT_APP_API_URL}/teams/boards/${id}`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      method: "PUT",
-      body: JSON.stringify(updateBoardDTO),
-    }
-  ).then((res) => {
-    if (!res.ok) redirect("/login");
-    return res.json();
-  });
+  const client = await api({ attachAccessToken: true });
+  const res = await client.put(`/teams/boards/${id}`, updateBoardDTO);
 
   revalidatePath("/dashboard");
 
-  return board;
+  return res.data;
 }

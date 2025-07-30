@@ -1,19 +1,9 @@
 import { Team } from "@/types/Team";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { api } from "../base";
 
 export async function getUserTeams(): Promise<Team[]> {
-  const cookiesStore = await cookies();
-  const accessToken = cookiesStore.get("accessToken")?.value;
+  const client = await api({ attachAccessToken: true });
+  const res = await client.get("/teams");
 
-  const teams: Team[] = await fetch(`${process.env.NEXT_APP_API_URL}/teams`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  }).then((res) => {
-    if (!res.ok) redirect("/login");
-    return res.json();
-  });
-
-  return teams;
+  return res.data;
 }

@@ -1,25 +1,13 @@
 "use server";
 
 import { PaymentDTO } from "@/types/dto/PaymentDTO";
-import { cookies } from "next/headers";
+import { api } from "../base";
 
 export async function handlePayment(paymentDTO: PaymentDTO): Promise<string> {
-  const cookiesStore = await cookies();
-  const accessToken = cookiesStore.get("accessToken")?.value;
-
-  const res = await fetch(
-    `${process.env.NEXT_APP_API_URL}/checkout/create-checkout-session`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(paymentDTO),
-    }
+  const client = await api({ attachAccessToken: true });
+  const res = await client.post(
+    "/checkout/create-checkout-session",
+    paymentDTO
   );
-
-  const data = await res.json();
-
-  return data.id;
+  return res.data.id;
 }
