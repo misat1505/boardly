@@ -13,7 +13,11 @@ import com.example.backend.domain.entities.Team;
 import com.example.backend.domain.entities.User;
 import com.example.backend.infrastructure.TeamRepository;
 import com.example.backend.infrastructure.UserRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Event;
+import com.stripe.model.PaymentIntent;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 
@@ -64,27 +68,54 @@ public class CheckoutService {
   private Product getProduct(PaymentDTO data) {
     if (data.getType() == PaymentType.UPGRADE_TEAM) {
       Optional<Team> teamOptional = this.teamRepository.findById(UUID.fromString(data.getId()));
-      Team team = teamOptional.orElseThrow(() ->
-            new RuntimeException("Team not found")
-        );
+      Team team = teamOptional.orElseThrow(() -> new RuntimeException("Team not found"));
 
-        return new Product(
-            team.getId().toString(),
-            "Upgrade team: " + team.getName(),
-            1000L,
-            "usd"
-        );
-      } else if (data.getType() == PaymentType.UPGRADE_USER) {
-        Optional<User> userOptional = this.userRepository.findById(UUID.fromString(data.getId()));
-        User user = userOptional.orElseThrow(() -> new RuntimeException("User not found"));
+      return new Product(
+          team.getId().toString(),
+          "Upgrade team: " + team.getName(),
+          1000L,
+          "usd");
+    } else if (data.getType() == PaymentType.UPGRADE_USER) {
+      Optional<User> userOptional = this.userRepository.findById(UUID.fromString(data.getId()));
+      User user = userOptional.orElseThrow(() -> new RuntimeException("User not found"));
 
-        return new Product(
-            user.getId().toString(),
-            "Upgrade user: " + user.getUsername(),
-            2000L,
-            "usd"
-        );
+      return new Product(
+          user.getId().toString(),
+          "Upgrade user: " + user.getUsername(),
+          2000L,
+          "usd");
+    }
+    throw new RuntimeException("Invalid payment type");
+  }
+
+  public void handlePaymentIntentSucceeded(Event event) {
+    try {
+      ObjectMapper mapper = new ObjectMapper();
+      JsonNode eventJson = mapper.readTree(event.toJson());
+
+      JsonNode metadataNode = eventJson.path("data").path("object").path("metadata");
+      if (metadataNode.isMissingNode()) {
+          throw new RuntimeException("Metadata not found in event JSON");
       }
-      throw new RuntimeException("Invalid payment type");
+
+      PaymentType paymentType = PaymentType.valueOf(metadataNode.path("paymentType").asText(null));
+      String id = metadataNode.path("id").asText(null);
+      
+
+      if (paymentType == PaymentType.UPGRADE_TEAM) {
+        Optional<Team> teamOptional = this.teamRepository.findById(UUID.fromString(id));
+        Team team = teamOptional.orElseThrow(() -> new RuntimeException("Team not found"));
+        team.setIsUpgraded(true);
+        teamRepository.save(team);
+      } else if (paymentType == PaymentType.UPGRADE_USER) {
+        Optional<User> userOptional = this.userRepository.findById(UUID.fromString(id));
+        User user = userOptional.orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
+        user.setIsPremium(true);
+        userRepository.save(user);
+      }
+    } catch (Exception e) { 
+        System.err.println("Error processing payment intent succeeded event: " + e.getMessage());
+        throw new RuntimeException("Failed to process payment intent succeeded event: " + e.getMessage(), e);
+    }
   }
 }

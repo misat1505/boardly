@@ -77,6 +77,7 @@ public class CheckoutController {
             case "payment_intent.succeeded" -> {
                 System.out.println("✅ Payment succeeded");
                 System.out.println(event);
+                checkoutService.handlePaymentIntentSucceeded(event);
             }
             case "payment_intent.payment_failed" -> System.out.println("❌ Payment failed");
             default -> System.out.println("Unhandled event type: " + event.getType());
