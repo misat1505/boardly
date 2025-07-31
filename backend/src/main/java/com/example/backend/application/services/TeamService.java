@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.domain.dtos.CreateTeamDTO;
@@ -15,6 +16,9 @@ import com.example.backend.infrastructure.UserRepository;
 
 @Service
 public class TeamService {
+  @Value("${team.max-non-premium-teams}")
+  private int maxNonPremiumTeams;
+
   private final TeamRepository teamRepository;
   private final UserRepository userRepository;
 
@@ -27,9 +31,16 @@ public class TeamService {
     return teamRepository.findAllByMemberId(userId);
   }
 
-  public Team createTeam(CreateTeamDTO createTeamDTO, User userFromContext) {
+  public Team createTeam(CreateTeamDTO createTeamDTO, User userFromContext) throws IllegalStateException {
     User managedUser = userRepository.findById(userFromContext.getId())
         .orElseThrow(() -> new RuntimeException("User not found"));
+    
+    if (!managedUser.getIsPremium()) {
+      Set<Team> usersTeams = teamRepository.findAllByMemberId(managedUser.getId());
+      if (usersTeams.size() >= maxNonPremiumTeams) {
+        throw new IllegalStateException("Non-premium users can only be part of " + maxNonPremiumTeams + " teams.");
+      }
+    }
 
     Team team = new Team();
     team.setName(createTeamDTO.getName());

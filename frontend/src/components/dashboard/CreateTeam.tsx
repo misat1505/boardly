@@ -14,6 +14,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateTeamDTO } from "@/types/dto/CreateTeamDTO";
 import { createTeam } from "@/actions/teams/createTeam";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type CreateTeamProps = PropsWithChildren;
 
@@ -43,9 +46,13 @@ const CreateTeamForm = () => {
   } = useForm({
     resolver: zodResolver(CreateTeamDTO),
   });
+  const router = useRouter();
 
   const onSubmit = async (data: CreateTeamDTO) => {
-    createTeam(data);
+    const { error, data: team } = await createTeam(data);
+    console.log(team, error);
+    if (team) router.push(`/dashboard?team=${team.id}`);
+    if (error) toast(error.message);
   };
 
   return (

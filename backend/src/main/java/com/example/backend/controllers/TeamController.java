@@ -51,15 +51,19 @@ public class TeamController {
   }
   
   @PostMapping
-  public ResponseEntity<Team> createTeam(@RequestBody CreateTeamDTO createTeamDTO) {
+  public ResponseEntity<?> createTeam(@RequestBody CreateTeamDTO createTeamDTO) {
     Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     if (!(principal instanceof User user)) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    Team team = teamService.createTeam(createTeamDTO, user);
-    return ResponseEntity.ok(team);
+    try {
+      Team team = teamService.createTeam(createTeamDTO, user);
+      return ResponseEntity.ok(team);
+    } catch (IllegalStateException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
   }
   
   @GetMapping("/{teamId}/boards")
