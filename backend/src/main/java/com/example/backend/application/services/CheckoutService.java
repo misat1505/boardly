@@ -22,99 +22,99 @@ import com.stripe.param.checkout.SessionCreateParams;
 
 @Service
 public class CheckoutService {
-  private final TeamRepository teamRepository;
-  private final UserRepository userRepository;
+    private final TeamRepository teamRepository;
+    private final UserRepository userRepository;
 
-  public CheckoutService(TeamRepository teamRepository, UserRepository userRepository) {
-    this.teamRepository = teamRepository;
-    this.userRepository = userRepository;
-  }
+    public CheckoutService(TeamRepository teamRepository, UserRepository userRepository) {
+        this.teamRepository = teamRepository;
+        this.userRepository = userRepository;
+    }
 
-  public String createCheckoutSession(@RequestBody PaymentDTO data, User user) throws StripeException {
-    Product product = this.getProduct(data);
+    public String createCheckoutSession(@RequestBody PaymentDTO data, User user) throws StripeException {
+        Product product = this.getProduct(data);
 
-    SessionCreateParams params = SessionCreateParams.builder()
-        .setMode(SessionCreateParams.Mode.PAYMENT)
-        .setSuccessUrl("http://localhost:3000/payments/success")
-        .setCancelUrl("http://localhost:3000/payments/cancel")
-        .setCustomerEmail(user.getEmail())
-        .setPaymentIntentData(
-            SessionCreateParams.PaymentIntentData.builder()
-                .putMetadata("userId", user.getId().toString())
-                .putMetadata("paymentType", data.getType().toString())
-                .putMetadata("id", product.getId())
-                .putMetadata("productName", product.getName())
-                .build())
-        .addLineItem(
-            SessionCreateParams.LineItem.builder()
-                .setQuantity(1L)
-                .setPriceData(
-                    SessionCreateParams.LineItem.PriceData.builder()
-                        .setCurrency(product.getCurrency())
-                        .setUnitAmount(product.getPrice())
-                        .setProductData(
-                            SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                .setName(product.getName())
+        SessionCreateParams params = SessionCreateParams.builder()
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .setSuccessUrl("http://localhost:3000/payments/success")
+                .setCancelUrl("http://localhost:3000/payments/cancel")
+                .setCustomerEmail(user.getEmail())
+                .setPaymentIntentData(
+                        SessionCreateParams.PaymentIntentData.builder()
+                                .putMetadata("userId", user.getId().toString())
+                                .putMetadata("paymentType", data.getType().toString())
+                                .putMetadata("id", product.getId())
+                                .putMetadata("productName", product.getName())
                                 .build())
-                        .build())
-                .build())
-        .build();
+                .addLineItem(
+                        SessionCreateParams.LineItem.builder()
+                                .setQuantity(1L)
+                                .setPriceData(
+                                        SessionCreateParams.LineItem.PriceData.builder()
+                                                .setCurrency(product.getCurrency())
+                                                .setUnitAmount(product.getPrice())
+                                                .setProductData(
+                                                        SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                                                                .setName(product.getName())
+                                                                .build())
+                                                .build())
+                                .build())
+                .build();
 
-    Session session = Session.create(params);
-    return session.getId();
-  }
-  
-  private Product getProduct(PaymentDTO data) {
-    if (data.getType() == PaymentType.UPGRADE_TEAM) {
-      Optional<Team> teamOptional = this.teamRepository.findById(UUID.fromString(data.getId()));
-      Team team = teamOptional.orElseThrow(() -> new RuntimeException("Team not found"));
-
-      return new Product(
-          team.getId().toString(),
-          "Upgrade team: " + team.getName(),
-          1000L,
-          "usd");
-    } else if (data.getType() == PaymentType.UPGRADE_USER) {
-      Optional<User> userOptional = this.userRepository.findById(UUID.fromString(data.getId()));
-      User user = userOptional.orElseThrow(() -> new RuntimeException("User not found"));
-
-      return new Product(
-          user.getId().toString(),
-          "Upgrade user: " + user.getUsername(),
-          2000L,
-          "usd");
+        Session session = Session.create(params);
+        return session.getId();
     }
-    throw new RuntimeException("Invalid payment type");
-  }
 
-  public void handlePaymentIntentSucceeded(Event event) {
-    try {
-      ObjectMapper mapper = new ObjectMapper();
-      JsonNode eventJson = mapper.readTree(event.toJson());
+    private Product getProduct(PaymentDTO data) {
+        if (data.getType() == PaymentType.UPGRADE_TEAM) {
+            Optional<Team> teamOptional = this.teamRepository.findById(UUID.fromString(data.getId()));
+            Team team = teamOptional.orElseThrow(() -> new RuntimeException("Team not found"));
 
-      JsonNode metadataNode = eventJson.path("data").path("object").path("metadata");
-      if (metadataNode.isMissingNode()) {
-          throw new RuntimeException("Metadata not found in event JSON");
-      }
+            return new Product(
+                    team.getId().toString(),
+                    "Upgrade team: " + team.getName(),
+                    1000L,
+                    "usd");
+        } else if (data.getType() == PaymentType.UPGRADE_USER) {
+            Optional<User> userOptional = this.userRepository.findById(UUID.fromString(data.getId()));
+            User user = userOptional.orElseThrow(() -> new RuntimeException("User not found"));
 
-      PaymentType paymentType = PaymentType.valueOf(metadataNode.path("paymentType").asText(null));
-      String id = metadataNode.path("id").asText(null);
-      
-
-      if (paymentType == PaymentType.UPGRADE_TEAM) {
-        Optional<Team> teamOptional = this.teamRepository.findById(UUID.fromString(id));
-        Team team = teamOptional.orElseThrow(() -> new RuntimeException("Team not found"));
-        team.setIsUpgraded(true);
-        teamRepository.save(team);
-      } else if (paymentType == PaymentType.UPGRADE_USER) {
-        Optional<User> userOptional = this.userRepository.findById(UUID.fromString(id));
-        User user = userOptional.orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
-        user.setIsPremium(true);
-        userRepository.save(user);
-      }
-    } catch (Exception e) { 
-        System.err.println("Error processing payment intent succeeded event: " + e.getMessage());
-        throw new RuntimeException("Failed to process payment intent succeeded event: " + e.getMessage(), e);
+            return new Product(
+                    user.getId().toString(),
+                    "Upgrade user: " + user.getUsername(),
+                    2000L,
+                    "usd");
+        }
+        throw new RuntimeException("Invalid payment type");
     }
-  }
+
+    public void handlePaymentIntentSucceeded(Event event) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode eventJson = mapper.readTree(event.toJson());
+
+            JsonNode metadataNode = eventJson.path("data").path("object").path("metadata");
+            if (metadataNode.isMissingNode()) {
+                throw new RuntimeException("Metadata not found in event JSON");
+            }
+
+            PaymentType paymentType = PaymentType.valueOf(metadataNode.path("paymentType").asText(null));
+            String id = metadataNode.path("id").asText(null);
+
+
+            if (paymentType == PaymentType.UPGRADE_TEAM) {
+                Optional<Team> teamOptional = this.teamRepository.findById(UUID.fromString(id));
+                Team team = teamOptional.orElseThrow(() -> new RuntimeException("Team not found"));
+                team.setIsUpgraded(true);
+                teamRepository.save(team);
+            } else if (paymentType == PaymentType.UPGRADE_USER) {
+                Optional<User> userOptional = this.userRepository.findById(UUID.fromString(id));
+                User user = userOptional.orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
+                user.setIsPremium(true);
+                userRepository.save(user);
+            }
+        } catch (Exception e) {
+            System.err.println("Error processing payment intent succeeded event: " + e.getMessage());
+            throw new RuntimeException("Failed to process payment intent succeeded event: " + e.getMessage(), e);
+        }
+    }
 }

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.backend.domain.entities.User;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
-  Optional<User> findByEmail(String email);
-  List<User> findByUsernameContainingIgnoreCase(String partialUsername);
+    Optional<User> findByEmail(String email);
+
+    List<User> findByUsernameContainingIgnoreCase(String partialUsername);
 }

@@ -17,53 +17,53 @@ import com.example.backend.infrastructure.TeamRepository;
 
 @Service
 public class BoardService {
-  @Value("${team.max-non-premium-boards}")
-  private int maxNonPremiumBoards;
+    @Value("${team.max-non-premium-boards}")
+    private int maxNonPremiumBoards;
 
-  private final BoardRepository boardRepository;
-  private final TeamRepository teamRepository;
-  
-  public BoardService(BoardRepository boardRepository, TeamRepository teamRepository) {
-    this.boardRepository = boardRepository;
-    this.teamRepository = teamRepository;
-  }
+    private final BoardRepository boardRepository;
+    private final TeamRepository teamRepository;
 
-  public Set<Board> getTeamBoards(UUID teamId) {
-    return boardRepository.findByTeamId(teamId);
-  }
-  
-  public Board createBoard(CreateBoardDTO dto) throws IllegalStateException {
-    Team team = teamRepository.findById(dto.getTeamId())
-        .orElseThrow(() -> new IllegalArgumentException("Team not found"));
-    
-    if (!team.getIsUpgraded()) {
-      Set<Board> teamBoards = boardRepository.findByTeamId(team.getId());
-      if (teamBoards.size() >= maxNonPremiumBoards) {
-        throw new IllegalStateException("Non-premium team can only have " + maxNonPremiumBoards + " boards.");
-      }
+    public BoardService(BoardRepository boardRepository, TeamRepository teamRepository) {
+        this.boardRepository = boardRepository;
+        this.teamRepository = teamRepository;
     }
 
-    Board board = new Board();
-    board.setTitle(dto.getTitle());
-    board.setContent(dto.getContent());
-    board.setTeam(team);
+    public Set<Board> getTeamBoards(UUID teamId) {
+        return boardRepository.findByTeamId(teamId);
+    }
 
-    return boardRepository.save(board);
-  }
-  
-  public Optional<Board> getBoardById(UUID boardId) {
-    return boardRepository.findById(boardId);
-  }
+    public Board createBoard(CreateBoardDTO dto) throws IllegalStateException {
+        Team team = teamRepository.findById(dto.getTeamId())
+                .orElseThrow(() -> new IllegalArgumentException("Team not found"));
 
-  public Board updateBoard(UUID boardId, UpdateBoardDTO updateBoardDTO) {
-    Board board = boardRepository.findById(boardId)
-        .orElseThrow(() -> new RuntimeException("Board not found"));
+        if (!team.getIsUpgraded()) {
+            Set<Board> teamBoards = boardRepository.findByTeamId(team.getId());
+            if (teamBoards.size() >= maxNonPremiumBoards) {
+                throw new IllegalStateException("Non-premium team can only have " + maxNonPremiumBoards + " boards.");
+            }
+        }
 
-    updateBoardDTO.getTitle().ifPresent(board::setTitle);
-    updateBoardDTO.getContent().ifPresent(board::setContent);
-    updateBoardDTO.getPreviewUrl().ifPresent(board::setPreviewUrl);
-    board.setUpdatedAt(Instant.now());
+        Board board = new Board();
+        board.setTitle(dto.getTitle());
+        board.setContent(dto.getContent());
+        board.setTeam(team);
 
-    return boardRepository.save(board);
-  }
+        return boardRepository.save(board);
+    }
+
+    public Optional<Board> getBoardById(UUID boardId) {
+        return boardRepository.findById(boardId);
+    }
+
+    public Board updateBoard(UUID boardId, UpdateBoardDTO updateBoardDTO) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new RuntimeException("Board not found"));
+
+        updateBoardDTO.getTitle().ifPresent(board::setTitle);
+        updateBoardDTO.getContent().ifPresent(board::setContent);
+        updateBoardDTO.getPreviewUrl().ifPresent(board::setPreviewUrl);
+        board.setUpdatedAt(Instant.now());
+
+        return boardRepository.save(board);
+    }
 }

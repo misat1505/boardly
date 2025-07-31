@@ -26,29 +26,50 @@ public class Team {
 
     @ManyToMany
     @JoinTable(
-        name = "user_team",
-        joinColumns = @JoinColumn(name = "team_id"),
-        inverseJoinColumns = @JoinColumn(name = "user_id")
+            name = "user_team",
+            joinColumns = @JoinColumn(name = "team_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<User> members = new HashSet<>();
 
-    public Team() {}
+    public Team() {
+    }
 
     public Team(UUID id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
+    public UUID getId() {
+        return id;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
-    public Set<User> getMembers() { return members; }
-    public void setMembers(Set<User> members) { this.members = members; }
+    public String getName() {
+        return name;
+    }
 
-    public boolean getIsUpgraded() { return isUpgraded; }
-    public void setIsUpgraded(boolean isUpgraded) { this.isUpgraded = isUpgraded; }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Set<User> getMembers() {
+        return members;
+    }
+
+    public void setMembers(Set<User> members) {
+        this.members = members;
+    }
+
+    public boolean getIsUpgraded() {
+        return isUpgraded;
+    }
+
+    public void setIsUpgraded(boolean isUpgraded) {
+        this.isUpgraded = isUpgraded;
+    }
 }
 

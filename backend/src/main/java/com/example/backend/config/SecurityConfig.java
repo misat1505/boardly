@@ -15,18 +15,19 @@ public class SecurityConfig {
     SecurityConfig(JwtAuthFilter jwtAuthFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
     }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-          .csrf().disable()
-          .authorizeHttpRequests(auth -> auth
-              .requestMatchers("/login**", "/oauth2/**", "/auth/**", "/error").permitAll()
-              .anyRequest().permitAll()
-          )
-          .oauth2Login(oauth2 -> oauth2
-              .defaultSuccessUrl("/oauth2/login/success")
+                .csrf().disable()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/login**", "/oauth2/**", "/auth/**", "/error").permitAll()
+                        .anyRequest().permitAll()
                 )
-          .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .oauth2Login(oauth2 -> oauth2
+                        .defaultSuccessUrl("/oauth2/login/success")
+                )
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

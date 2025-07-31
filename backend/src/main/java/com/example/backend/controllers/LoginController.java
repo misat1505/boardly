@@ -12,7 +12,7 @@ import com.example.backend.domain.dtos.LoginResponseDTO;
 
 @RestController
 public class LoginController {
-  private final AuthService authService;
+    private final AuthService authService;
 
     public LoginController(AuthService authService) {
         this.authService = authService;
@@ -20,15 +20,15 @@ public class LoginController {
 
     @GetMapping("/oauth2/login/success")
     public RedirectView loginSuccess(@AuthenticationPrincipal OAuth2User principal) {
-      LoginResponseDTO loginResponse = this.authService.login(principal);
+        LoginResponseDTO loginResponse = this.authService.login(principal);
 
-    String redirectUrl = UriComponentsBuilder
-        .fromUriString("http://localhost:3000/login/callback")
-        .queryParam("accessToken", loginResponse.getAccessToken())
-        .queryParam("refreshToken", loginResponse.getRefreshToken())
-        .build()
-        .toUriString();
+        String redirectUrl = UriComponentsBuilder
+                .fromUriString("http://localhost:3000/login/callback")
+                .queryParam("accessToken", loginResponse.getAccessToken())
+                .queryParam("refreshToken", loginResponse.getRefreshToken())
+                .build()
+                .toUriString();
 
-    return new RedirectView(redirectUrl); 
+        return new RedirectView(redirectUrl);
     }
 }

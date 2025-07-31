@@ -13,14 +13,14 @@ import com.example.backend.domain.entities.User;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-  private final UserService userService;
+    private final UserService userService;
 
-  public UserController(UserService userService) {
-    this.userService = userService;
-  }
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
-  @GetMapping("/search")
-  public List<User> searchUsers(@RequestParam("q") String query) {
-    return userService.searchByPartialUsername(query);
-  }
+    @GetMapping("/search")
+    public List<User> searchUsers(@RequestParam("q") String query) {
+        return userService.searchByPartialUsername(query);
+    }
 }

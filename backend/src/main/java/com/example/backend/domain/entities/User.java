@@ -34,7 +34,8 @@ public class User {
     @JsonIgnore
     private Set<Team> teams = new HashSet<>();
 
-    public User() {}
+    public User() {
+    }
 
     public User(UUID id, String username, String givenName, String email, String imageUrl, boolean isPremium) {
         this.id = id;
@@ -45,33 +46,59 @@ public class User {
         this.isPremium = isPremium;
     }
 
-    public UUID getId() { return id; }
+    public UUID getId() {
+        return id;
+    }
 
     public void setId(UUID id) {
         this.id = id;
     }
-    
-    public String getGivenName() { return givenName; }
-    public void setGivenName(String givenName) { this.givenName = givenName; }
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    public String getGivenName() {
+        return givenName;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public void setGivenName(String givenName) {
+        this.givenName = givenName;
+    }
 
-    public String getImageUrl() { return imageUrl; }
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
-    
-    public boolean getIsPremium() { return isPremium; }
+
+    public boolean getIsPremium() {
+        return isPremium;
+    }
 
     public void setIsPremium(boolean isPremium) {
         this.isPremium = isPremium;
     }
-    
-    public Set<Team> getTeams() { return teams; }
-    public void setTeams(Set<Team> teams) { this.teams = teams; }
+
+    public Set<Team> getTeams() {
+        return teams;
+    }
+
+    public void setTeams(Set<Team> teams) {
+        this.teams = teams;
+    }
 }

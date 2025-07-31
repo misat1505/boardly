@@ -6,7 +6,8 @@ public class PaymentDTO {
     private PaymentType type;
     private String id;
 
-    public PaymentDTO() {}
+    public PaymentDTO() {
+    }
 
     public PaymentDTO(PaymentType type, String id) {
         this.type = type;

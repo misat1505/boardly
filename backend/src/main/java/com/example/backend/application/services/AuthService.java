@@ -43,7 +43,7 @@ public class AuthService {
 
         return new LoginResponseDTO(user, accessToken, refreshToken);
     }
-    
+
     public Optional<User> findById(String id) {
         UUID uuid = UUID.fromString(id);
         return userRepository.findById(uuid);

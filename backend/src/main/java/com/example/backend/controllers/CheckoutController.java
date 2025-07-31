@@ -42,7 +42,7 @@ public class CheckoutController {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (!(principal instanceof User user)) {
-          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         String sessionId = checkoutService.createCheckoutSession(data, user);
@@ -63,9 +63,9 @@ public class CheckoutController {
 
         try {
             event = Webhook.constructEvent(
-                payload,
-                sigHeader,
-                endpointSecret
+                    payload,
+                    sigHeader,
+                    endpointSecret
             );
         } catch (SignatureVerificationException e) {
             System.out.println(e.getMessage());
