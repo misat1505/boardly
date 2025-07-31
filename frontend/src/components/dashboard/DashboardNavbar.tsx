@@ -9,9 +9,10 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import GoPro from "./GoPro";
+import { User } from "@/types/User";
 
 const DashboardNavbar = async () => {
-  const user = await getCurrentUser();
+  const user = (await getCurrentUser()) as User;
 
   return (
     <>

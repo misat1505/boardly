@@ -15,7 +15,7 @@ const BoardPage = async ({ params }: BoardPageProps) => {
   if (!board) notFound();
 
   return (
-    <WhiteboardProvider board={board} user={user}>
+    <WhiteboardProvider board={board} user={user!}>
       <Whiteboard />
     </WhiteboardProvider>
   );
