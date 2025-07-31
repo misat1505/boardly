@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.backend.application.services.BoardService;
 import com.example.backend.application.services.TeamService;
 import com.example.backend.domain.dtos.CreateBoardDTO;
-import com.example.backend.domain.dtos.UpdateBoardDTO;
 import com.example.backend.domain.dtos.CreateTeamDTO;
 import com.example.backend.domain.dtos.InviteUserToTeamDTO;
+import com.example.backend.domain.dtos.UpdateBoardDTO;
 import com.example.backend.domain.entities.Board;
 import com.example.backend.domain.entities.Team;
 import com.example.backend.domain.entities.User;
@@ -126,11 +126,14 @@ public class TeamController {
     Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     if (!(principal instanceof User)) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    teamService.inviteUserToTeam(teamId, dto);
-
-    return ResponseEntity.status(HttpStatus.CREATED).body("User invited");
+    try {
+      teamService.inviteUserToTeam(teamId, dto);
+      return ResponseEntity.status(HttpStatus.CREATED).body("User invited");
+    } catch (IllegalStateException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
   }
 }

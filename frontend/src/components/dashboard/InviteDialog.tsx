@@ -18,6 +18,7 @@ import { User } from "@/types/User";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { RiUserAddFill } from "react-icons/ri";
 import { inviteUser } from "@/actions/teams/inviteUser";
+import { toast } from "sonner";
 
 type InviteDialogProps = { team: Team };
 
@@ -102,6 +103,14 @@ const InviteDialogContent = ({ team }: InviteDialogContentProps) => {
 type SearchItemProps = { user: User; teamId: Team["id"] };
 
 const SearchItem = ({ user, teamId }: SearchItemProps) => {
+  const handleInviteUser = async () => {
+    const { error } = await inviteUser(teamId, user.id);
+    if (error)
+      toast.error("Couldn't invite user to team", {
+        description: error.message,
+      });
+  };
+
   return (
     <div className="flex items-center py-1 px-2 border border-muted-foreground/20 rounded-md justify-between">
       <div className="flex items-center space-x-2">
@@ -115,7 +124,7 @@ const SearchItem = ({ user, teamId }: SearchItemProps) => {
         </div>
       </div>
 
-      <Button title="Invite" onClick={() => inviteUser(teamId, user.id)}>
+      <Button title="Invite" onClick={handleInviteUser}>
         <RiUserAddFill />
       </Button>
     </div>

@@ -57,14 +57,21 @@ public class TeamService {
     return savedTeam;
   }
 
-  public void inviteUserToTeam(UUID teamId, InviteUserToTeamDTO inviteUserToTeamDTO) {
+  public void inviteUserToTeam(UUID teamId, InviteUserToTeamDTO inviteUserToTeamDTO) throws IllegalStateException {
     UUID userId = inviteUserToTeamDTO.getUserId();
 
     Team team = teamRepository.findById(teamId)
       .orElseThrow(() -> new RuntimeException("Team not found"));
 
     User user = userRepository.findById(userId)
-      .orElseThrow(() -> new RuntimeException("User not found"));
+        .orElseThrow(() -> new RuntimeException("User not found"));
+    
+    if (!user.getIsPremium()) {
+      Set<Team> usersTeams = teamRepository.findAllByMemberId(user.getId());
+      if (usersTeams.size() >= maxNonPremiumTeams) {
+        throw new IllegalStateException("Non-premium users can only be part of " + maxNonPremiumTeams + " teams.");
+      }
+    }
 
     if (!team.getMembers().contains(user)) {
       team.getMembers().add(user);

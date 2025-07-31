@@ -2,15 +2,9 @@
 import { CreateTeamDTO } from "@/types/dto/CreateTeamDTO";
 import { Team } from "@/types/Team";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { api } from "../base";
 import { AxiosError } from "axios";
-
-type ApiError<E> = { message: E };
-
-type ApiResponse<T, E extends string> =
-  | { data: T; error: null }
-  | { data: null; error: ApiError<E> };
+import { ApiResponse } from "@/types/ApiResponse";
 
 export async function createTeam(
   createTeamDTO: CreateTeamDTO
