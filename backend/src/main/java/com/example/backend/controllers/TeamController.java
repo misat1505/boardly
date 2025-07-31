@@ -109,16 +109,20 @@ public class TeamController {
   }
 
   @PostMapping("/{teamId}/boards")
-  public ResponseEntity<Board> createBoard(@PathVariable UUID teamId, @RequestBody CreateBoardDTO dto) {
+  public ResponseEntity<?> createBoard(@PathVariable UUID teamId, @RequestBody CreateBoardDTO dto) {
     Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     if (!(principal instanceof User)) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    dto.setTeamId(teamId);
-    Board board = boardService.createBoard(dto);
-    return ResponseEntity.status(HttpStatus.CREATED).body(board);
+    try {
+      dto.setTeamId(teamId);
+      Board board = boardService.createBoard(dto);
+      return ResponseEntity.status(HttpStatus.CREATED).body(board);
+    } catch (IllegalStateException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
   }
 
   @PostMapping("/{teamId}/invite")

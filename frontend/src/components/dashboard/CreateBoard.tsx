@@ -16,6 +16,8 @@ import { Team } from "@/types/Team";
 import { CreateBoardDTO } from "@/types/dto/CreateBoardDTO";
 import z from "zod";
 import { createBoard } from "@/actions/teams/createBoard";
+import { toast } from "sonner";
+import useUpgradeTeam from "@/hooks/useUpgradeTeam";
 
 type CreateBoardProps = PropsWithChildren & { team: Team };
 
@@ -50,6 +52,7 @@ const CreateBoardForm = ({ team }: CreateBoardFormProps) => {
   } = useForm({
     resolver: zodResolver(FormValues),
   });
+  const handleUpgrade = useUpgradeTeam(team.id);
 
   const onSubmit = async (data: FormValues) => {
     const createBoardDTO: CreateBoardDTO = {
@@ -57,7 +60,12 @@ const CreateBoardForm = ({ team }: CreateBoardFormProps) => {
       content: "{}",
       teamId: team.id,
     };
-    createBoard(createBoardDTO);
+    const { error } = await createBoard(createBoardDTO);
+    if (error)
+      toast.error("Couldn't create board", {
+        description: error.message,
+        action: <Button onClick={handleUpgrade}>Upgrade</Button>,
+      });
   };
 
   return (

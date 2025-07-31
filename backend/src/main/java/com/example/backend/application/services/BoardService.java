@@ -1,10 +1,11 @@
 package com.example.backend.application.services;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.time.Instant;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.domain.dtos.CreateBoardDTO;
@@ -16,6 +17,9 @@ import com.example.backend.infrastructure.TeamRepository;
 
 @Service
 public class BoardService {
+  @Value("${team.max-non-premium-boards}")
+  private int maxNonPremiumBoards;
+
   private final BoardRepository boardRepository;
   private final TeamRepository teamRepository;
   
@@ -28,16 +32,21 @@ public class BoardService {
     return boardRepository.findByTeamId(teamId);
   }
   
-  public Board createBoard(CreateBoardDTO dto) {
-    Optional<Team> teamOpt = teamRepository.findById(dto.getTeamId());
-    if (teamOpt.isEmpty()) {
-      throw new IllegalArgumentException("Team not found");
+  public Board createBoard(CreateBoardDTO dto) throws IllegalStateException {
+    Team team = teamRepository.findById(dto.getTeamId())
+        .orElseThrow(() -> new IllegalArgumentException("Team not found"));
+    
+    if (!team.getIsUpgraded()) {
+      Set<Board> teamBoards = boardRepository.findByTeamId(team.getId());
+      if (teamBoards.size() >= maxNonPremiumBoards) {
+        throw new IllegalStateException("Non-premium team can only have " + maxNonPremiumBoards + " boards.");
+      }
     }
 
     Board board = new Board();
     board.setTitle(dto.getTitle());
     board.setContent(dto.getContent());
-    board.setTeam(teamOpt.get());
+    board.setTeam(team);
 
     return boardRepository.save(board);
   }
