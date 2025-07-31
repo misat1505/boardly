@@ -14,9 +14,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateTeamDTO } from "@/types/dto/CreateTeamDTO";
 import { createTeam } from "@/actions/teams/createTeam";
-import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import useUpgradeUser from "@/hooks/useUpgradeUser";
 
 type CreateTeamProps = PropsWithChildren;
 
@@ -47,12 +47,16 @@ const CreateTeamForm = () => {
     resolver: zodResolver(CreateTeamDTO),
   });
   const router = useRouter();
+  const handleUpgrade = useUpgradeUser();
 
   const onSubmit = async (data: CreateTeamDTO) => {
     const { error, data: team } = await createTeam(data);
-    console.log(team, error);
     if (team) router.push(`/dashboard?team=${team.id}`);
-    if (error) toast(error.message);
+    if (error)
+      toast.error("Couldn't create board", {
+        description: error.message,
+        action: <Button onClick={handleUpgrade}>Go PRO</Button>,
+      });
   };
 
   return (

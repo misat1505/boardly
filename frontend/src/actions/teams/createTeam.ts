@@ -24,7 +24,6 @@ export async function createTeam(
 
     return { data: team, error: null };
   } catch (e) {
-    console.log(`server action ${e}`);
     if (e instanceof AxiosError && e.response?.status === 400) {
       return {
         data: null,

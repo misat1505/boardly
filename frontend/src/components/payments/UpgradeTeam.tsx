@@ -2,25 +2,12 @@
 
 import { Team } from "@/types/Team";
 import { Button } from "../ui/button";
-import { loadStripe } from "@stripe/stripe-js";
-import { handlePayment } from "@/actions/payments/handlePayment";
-import { Payment } from "@/types/payments/Payment";
+import useUpgradeTeam from "@/hooks/useUpgradeTeam";
 
 type UpgradeTeamProps = { team: Team };
 
 const UpgradeTeam = ({ team }: UpgradeTeamProps) => {
-  const handleUpgrade = async () => {
-    const sessionId = await handlePayment({
-      type: Payment.UPGRADE_TEAM,
-      id: team.id,
-    });
-
-    const stripe = await loadStripe(
-      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
-    );
-
-    await stripe?.redirectToCheckout({ sessionId: sessionId });
-  };
+  const handleUpgrade = useUpgradeTeam(team.id);
 
   return (
     <Button
