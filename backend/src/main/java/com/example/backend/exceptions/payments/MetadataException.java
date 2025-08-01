@@ -1,16 +1,16 @@
-package com.example.backend.exceptions.teams;
+package com.example.backend.exceptions.payments;
 
 import com.example.backend.exceptions.HttpException;
 import org.springframework.http.HttpStatus;
 
-public class TeamCreationException extends HttpException {
-    private static String DEFAULT_MESSAGE = "Team creation failed";
+public class MetadataException extends HttpException {
+    private static String DEFAULT_MESSAGE = "Metadata exception";
 
-    public TeamCreationException() {
+    public MetadataException() {
         super(DEFAULT_MESSAGE);
     }
 
-    public TeamCreationException(String message) {
+    public MetadataException(String message) {
         super(message);
     }
 

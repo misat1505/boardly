@@ -5,8 +5,14 @@ import com.example.backend.domain.dtos.payments.PaymentType;
 import com.example.backend.domain.dtos.payments.Product;
 import com.example.backend.domain.entities.Team;
 import com.example.backend.domain.entities.User;
+import com.example.backend.exceptions.payments.InvalidPaymentTypeException;
+import com.example.backend.exceptions.payments.MetadataException;
+import com.example.backend.exceptions.teams.TeamCreationException;
+import com.example.backend.exceptions.teams.TeamNotFoundException;
+import com.example.backend.exceptions.users.UserNotFoundException;
 import com.example.backend.infrastructure.TeamRepository;
 import com.example.backend.infrastructure.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stripe.exception.StripeException;
@@ -66,10 +72,10 @@ public class CheckoutService {
         return session.getId();
     }
 
-    private Product getProduct(PaymentDTO data) {
+    private Product getProduct(PaymentDTO data) throws TeamCreationException, UserNotFoundException, InvalidPaymentTypeException {
         if (data.getType() == PaymentType.UPGRADE_TEAM) {
             Optional<Team> teamOptional = this.teamRepository.findById(UUID.fromString(data.getId()));
-            Team team = teamOptional.orElseThrow(() -> new RuntimeException("Team not found"));
+            Team team = teamOptional.orElseThrow(TeamNotFoundException::new);
 
             return new Product(
                     team.getId().toString(),
@@ -78,7 +84,7 @@ public class CheckoutService {
                     "usd");
         } else if (data.getType() == PaymentType.UPGRADE_USER) {
             Optional<User> userOptional = this.userRepository.findById(UUID.fromString(data.getId()));
-            User user = userOptional.orElseThrow(() -> new RuntimeException("User not found"));
+            User user = userOptional.orElseThrow(UserNotFoundException::new);
 
             return new Product(
                     user.getId().toString(),
@@ -86,37 +92,32 @@ public class CheckoutService {
                     2000L,
                     "usd");
         }
-        throw new RuntimeException("Invalid payment type");
+        throw new InvalidPaymentTypeException();
     }
 
-    public void handlePaymentIntentSucceeded(Event event) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode eventJson = mapper.readTree(event.toJson());
+    public void handlePaymentIntentSucceeded(Event event) throws TeamNotFoundException, UserNotFoundException, JsonProcessingException, MetadataException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode eventJson = mapper.readTree(event.toJson());
 
-            JsonNode metadataNode = eventJson.path("data").path("object").path("metadata");
-            if (metadataNode.isMissingNode()) {
-                throw new RuntimeException("Metadata not found in event JSON");
-            }
+        JsonNode metadataNode = eventJson.path("data").path("object").path("metadata");
+        if (metadataNode.isMissingNode()) {
+            throw new MetadataException("Metadata not found in event JSON");
+        }
 
-            PaymentType paymentType = PaymentType.valueOf(metadataNode.path("paymentType").asText(null));
-            String id = metadataNode.path("id").asText(null);
+        PaymentType paymentType = PaymentType.valueOf(metadataNode.path("paymentType").asText(null));
+        String id = metadataNode.path("id").asText(null);
 
 
-            if (paymentType == PaymentType.UPGRADE_TEAM) {
-                Optional<Team> teamOptional = this.teamRepository.findById(UUID.fromString(id));
-                Team team = teamOptional.orElseThrow(() -> new RuntimeException("Team not found"));
-                team.setIsUpgraded(true);
-                teamRepository.save(team);
-            } else if (paymentType == PaymentType.UPGRADE_USER) {
-                Optional<User> userOptional = this.userRepository.findById(UUID.fromString(id));
-                User user = userOptional.orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
-                user.setIsPremium(true);
-                userRepository.save(user);
-            }
-        } catch (Exception e) {
-            System.err.println("Error processing payment intent succeeded event: " + e.getMessage());
-            throw new RuntimeException("Failed to process payment intent succeeded event: " + e.getMessage(), e);
+        if (paymentType == PaymentType.UPGRADE_TEAM) {
+            Optional<Team> teamOptional = this.teamRepository.findById(UUID.fromString(id));
+            Team team = teamOptional.orElseThrow(TeamNotFoundException::new);
+            team.setIsUpgraded(true);
+            teamRepository.save(team);
+        } else if (paymentType == PaymentType.UPGRADE_USER) {
+            Optional<User> userOptional = this.userRepository.findById(UUID.fromString(id));
+            User user = userOptional.orElseThrow(UserNotFoundException::new);
+            user.setIsPremium(true);
+            userRepository.save(user);
         }
     }
 }

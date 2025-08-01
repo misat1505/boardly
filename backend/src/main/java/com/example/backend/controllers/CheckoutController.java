@@ -3,6 +3,7 @@ package com.example.backend.controllers;
 import com.example.backend.application.services.CheckoutService;
 import com.example.backend.domain.dtos.PaymentDTO;
 import com.example.backend.domain.entities.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
@@ -37,7 +38,7 @@ public class CheckoutController {
     }
 
     @PostMapping("/webhook")
-    public ResponseEntity<String> handleStripeEvent(HttpServletRequest request, @RequestHeader("Stripe-Signature") String sigHeader) {
+    public ResponseEntity<String> handleStripeEvent(HttpServletRequest request, @RequestHeader("Stripe-Signature") String sigHeader) throws JsonProcessingException {
         String payload;
 
         try {
