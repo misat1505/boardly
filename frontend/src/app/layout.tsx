@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ReactQueryProvider } from "@/components/query-client";
 import { DEFAULT_SEO_CONFIG } from "@/constants/seo";
 import { Toaster } from "@/components/ui/sonner";
+import RefreshTokenProvider from "@/context/RefreshTokenContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,8 +37,10 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
-            <Toaster />
+            <RefreshTokenProvider>
+              {children}
+              <Toaster />
+            </RefreshTokenProvider>
           </ThemeProvider>
         </ReactQueryProvider>
       </body>

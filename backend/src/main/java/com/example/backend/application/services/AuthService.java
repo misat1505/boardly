@@ -1,15 +1,14 @@
 package com.example.backend.application.services;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.stereotype.Service;
-
 import com.example.backend.domain.dtos.LoginResponseDTO;
 import com.example.backend.domain.entities.User;
 import com.example.backend.infrastructure.UserRepository;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AuthService {
@@ -51,5 +50,16 @@ public class AuthService {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public String generateAccessToken(String refreshToken) {
+        boolean isTokenValid = jwtService.validateRefreshToken(refreshToken);
+        if (!isTokenValid) throw new RuntimeException("Invalid refresh token");
+
+        String userId = jwtService.extractUsernameFromRefreshToken(refreshToken);
+        userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return jwtService.generateAccessToken(userId);
     }
 }

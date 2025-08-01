@@ -1,17 +1,14 @@
 package com.example.backend.controllers;
 
-import java.util.List;
-
+import com.example.backend.application.services.AuthService;
+import com.example.backend.domain.dtos.RefreshTokenDTO;
+import com.example.backend.domain.entities.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.example.backend.application.services.AuthService;
-import com.example.backend.domain.entities.User;
+import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -37,5 +34,11 @@ public class AuthController {
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<String> generateAccessToken(@RequestBody RefreshTokenDTO dto) {
+        String accessToken = authService.generateAccessToken(dto.getRefreshToken());
+        return ResponseEntity.ok(accessToken);
     }
 }
