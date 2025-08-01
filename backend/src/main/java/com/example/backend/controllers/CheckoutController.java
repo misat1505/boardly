@@ -3,6 +3,10 @@ package com.example.backend.controllers;
 import com.example.backend.application.services.CheckoutService;
 import com.example.backend.domain.dtos.PaymentDTO;
 import com.example.backend.domain.entities.User;
+import com.example.backend.exceptions.payments.InvalidPaymentTypeException;
+import com.example.backend.exceptions.payments.MetadataException;
+import com.example.backend.exceptions.teams.TeamNotFoundException;
+import com.example.backend.exceptions.users.UserNotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
@@ -32,13 +36,13 @@ public class CheckoutController {
     }
 
     @PostMapping("/create-checkout-session")
-    public ResponseEntity<Map<String, String>> createCheckoutSession(@RequestBody PaymentDTO data, @AuthenticationPrincipal User user) throws StripeException {
+    public ResponseEntity<Map<String, String>> createCheckoutSession(@RequestBody PaymentDTO data, @AuthenticationPrincipal User user) throws StripeException, TeamNotFoundException, UserNotFoundException, InvalidPaymentTypeException {
         String sessionId = checkoutService.createCheckoutSession(data, user);
         return ResponseEntity.ok(Map.of("id", sessionId));
     }
 
     @PostMapping("/webhook")
-    public ResponseEntity<String> handleStripeEvent(HttpServletRequest request, @RequestHeader("Stripe-Signature") String sigHeader) throws JsonProcessingException {
+    public ResponseEntity<String> handleStripeEvent(HttpServletRequest request, @RequestHeader("Stripe-Signature") String sigHeader) throws JsonProcessingException, TeamNotFoundException, UserNotFoundException, MetadataException {
         String payload;
 
         try {

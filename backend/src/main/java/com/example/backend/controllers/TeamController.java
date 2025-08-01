@@ -9,6 +9,12 @@ import com.example.backend.domain.dtos.UpdateBoardDTO;
 import com.example.backend.domain.entities.Board;
 import com.example.backend.domain.entities.Team;
 import com.example.backend.domain.entities.User;
+import com.example.backend.exceptions.boards.BoardNotFoundException;
+import com.example.backend.exceptions.boards.TooManyBoardsException;
+import com.example.backend.exceptions.teams.TeamCreationException;
+import com.example.backend.exceptions.teams.TeamNotFoundException;
+import com.example.backend.exceptions.teams.TooManyTeamsException;
+import com.example.backend.exceptions.users.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -37,7 +43,7 @@ public class TeamController {
     }
 
     @PostMapping
-    public ResponseEntity<Team> createTeam(@RequestBody CreateTeamDTO createTeamDTO, @AuthenticationPrincipal User user) {
+    public ResponseEntity<Team> createTeam(@RequestBody CreateTeamDTO createTeamDTO, @AuthenticationPrincipal User user) throws TeamCreationException, UserNotFoundException {
         Team team = teamService.createTeam(createTeamDTO, user);
         return ResponseEntity.ok(team);
     }
@@ -56,20 +62,20 @@ public class TeamController {
     }
 
     @PutMapping("/boards/{boardId}")
-    public ResponseEntity<Board> updateBoard(@PathVariable UUID boardId, @RequestBody UpdateBoardDTO updateBoardDTO) {
+    public ResponseEntity<Board> updateBoard(@PathVariable UUID boardId, @RequestBody UpdateBoardDTO updateBoardDTO) throws BoardNotFoundException {
         Board board = boardService.updateBoard(boardId, updateBoardDTO);
         return ResponseEntity.ok(board);
     }
 
     @PostMapping("/{teamId}/boards")
-    public ResponseEntity<Board> createBoard(@PathVariable UUID teamId, @RequestBody CreateBoardDTO dto) {
+    public ResponseEntity<Board> createBoard(@PathVariable UUID teamId, @RequestBody CreateBoardDTO dto) throws TooManyBoardsException, TeamNotFoundException {
         dto.setTeamId(teamId);
         Board board = boardService.createBoard(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(board);
     }
 
     @PostMapping("/{teamId}/invite")
-    public ResponseEntity<String> inviteUserToTeam(@PathVariable UUID teamId, @RequestBody InviteUserToTeamDTO dto) {
+    public ResponseEntity<String> inviteUserToTeam(@PathVariable UUID teamId, @RequestBody InviteUserToTeamDTO dto) throws UserNotFoundException, TeamNotFoundException, TooManyTeamsException {
         teamService.inviteUserToTeam(teamId, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body("User invited");
     }

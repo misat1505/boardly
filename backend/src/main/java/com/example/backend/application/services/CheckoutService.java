@@ -7,7 +7,6 @@ import com.example.backend.domain.entities.Team;
 import com.example.backend.domain.entities.User;
 import com.example.backend.exceptions.payments.InvalidPaymentTypeException;
 import com.example.backend.exceptions.payments.MetadataException;
-import com.example.backend.exceptions.teams.TeamCreationException;
 import com.example.backend.exceptions.teams.TeamNotFoundException;
 import com.example.backend.exceptions.users.UserNotFoundException;
 import com.example.backend.infrastructure.TeamRepository;
@@ -38,7 +37,7 @@ public class CheckoutService {
         this.userRepository = userRepository;
     }
 
-    public String createCheckoutSession(@RequestBody PaymentDTO data, User user) throws StripeException {
+    public String createCheckoutSession(@RequestBody PaymentDTO data, User user) throws StripeException, TeamNotFoundException, UserNotFoundException, InvalidPaymentTypeException {
         Product product = this.getProduct(data);
 
         SessionCreateParams params = SessionCreateParams.builder()
@@ -72,7 +71,7 @@ public class CheckoutService {
         return session.getId();
     }
 
-    private Product getProduct(PaymentDTO data) throws TeamCreationException, UserNotFoundException, InvalidPaymentTypeException {
+    private Product getProduct(PaymentDTO data) throws TeamNotFoundException, UserNotFoundException, InvalidPaymentTypeException {
         if (data.getType() == PaymentType.UPGRADE_TEAM) {
             Optional<Team> teamOptional = this.teamRepository.findById(UUID.fromString(data.getId()));
             Team team = teamOptional.orElseThrow(TeamNotFoundException::new);

@@ -3,6 +3,8 @@ package com.example.backend.controllers;
 import com.example.backend.application.services.AuthService;
 import com.example.backend.domain.dtos.RefreshTokenDTO;
 import com.example.backend.domain.entities.User;
+import com.example.backend.exceptions.auth.InvalidTokenException;
+import com.example.backend.exceptions.users.UserNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +25,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<String> generateAccessToken(@RequestBody RefreshTokenDTO dto) {
+    public ResponseEntity<String> generateAccessToken(@RequestBody RefreshTokenDTO dto) throws UserNotFoundException, InvalidTokenException {
         String accessToken = authService.generateAccessToken(dto.getRefreshToken());
         return ResponseEntity.ok(accessToken);
     }
