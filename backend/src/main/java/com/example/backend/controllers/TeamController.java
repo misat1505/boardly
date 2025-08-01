@@ -1,6 +1,5 @@
 package com.example.backend.controllers;
 
-import com.example.backend.application.services.BoardService;
 import com.example.backend.application.services.TeamService;
 import com.example.backend.domain.dtos.CreateTeamDTO;
 import com.example.backend.domain.dtos.InviteUserToTeamDTO;
@@ -23,11 +22,9 @@ import java.util.UUID;
 @RequestMapping("/teams")
 public class TeamController {
     private final TeamService teamService;
-    private final BoardService boardService;
 
-    public TeamController(TeamService teamService, BoardService boardService) {
+    public TeamController(TeamService teamService) {
         this.teamService = teamService;
-        this.boardService = boardService;
     }
 
     @GetMapping
