@@ -2,6 +2,7 @@ package com.example.backend.application.services;
 
 import com.example.backend.domain.dtos.LoginResponseDTO;
 import com.example.backend.domain.entities.User;
+import com.example.backend.exceptions.users.UserNotFoundException;
 import com.example.backend.infrastructure.UserRepository;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -52,13 +53,14 @@ public class AuthService {
         return userRepository.findAll();
     }
 
-    public String generateAccessToken(String refreshToken) {
+    public String generateAccessToken(String refreshToken) throws UserNotFoundException {
         boolean isTokenValid = jwtService.validateRefreshToken(refreshToken);
+        System.out.println(isTokenValid + "    " + refreshToken);
         if (!isTokenValid) throw new RuntimeException("Invalid refresh token");
 
         String userId = jwtService.extractUsernameFromRefreshToken(refreshToken);
         userRepository.findById(UUID.fromString(userId))
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(UserNotFoundException::new);
 
         return jwtService.generateAccessToken(userId);
     }

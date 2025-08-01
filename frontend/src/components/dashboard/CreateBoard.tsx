@@ -57,7 +57,7 @@ const CreateBoardForm = ({ team }: CreateBoardFormProps) => {
   const onSubmit = async (data: FormValues) => {
     const createBoardDTO: CreateBoardDTO = {
       ...data,
-      content: "{}",
+      content: "[]",
       teamId: team.id,
     };
     const { error } = await createBoard(createBoardDTO);
