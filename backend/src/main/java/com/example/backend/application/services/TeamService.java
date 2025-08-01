@@ -4,6 +4,8 @@ import com.example.backend.domain.dtos.CreateTeamDTO;
 import com.example.backend.domain.dtos.InviteUserToTeamDTO;
 import com.example.backend.domain.entities.Team;
 import com.example.backend.domain.entities.User;
+import com.example.backend.exceptions.teams.TeamCreationException;
+import com.example.backend.exceptions.users.UserNotFoundException;
 import com.example.backend.infrastructure.TeamRepository;
 import com.example.backend.infrastructure.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,14 +32,14 @@ public class TeamService {
         return teamRepository.findAllByMemberId(userId);
     }
 
-    public Team createTeam(CreateTeamDTO createTeamDTO, User userFromContext) throws IllegalStateException {
+    public Team createTeam(CreateTeamDTO createTeamDTO, User userFromContext) throws TeamCreationException, UserNotFoundException {
         User managedUser = userRepository.findById(userFromContext.getId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(UserNotFoundException::new);
 
         if (!managedUser.getIsPremium()) {
             Set<Team> usersTeams = teamRepository.findAllByMemberId(managedUser.getId());
             if (usersTeams.size() >= maxNonPremiumTeams) {
-                throw new IllegalStateException("Non-premium users can only be part of " + maxNonPremiumTeams + " teams.");
+                throw new TeamCreationException("Non-premium users can only be part of " + maxNonPremiumTeams + " teams.");
             }
         }
 
