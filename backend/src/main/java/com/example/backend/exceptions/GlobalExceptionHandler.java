@@ -49,7 +49,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidPaymentTypeException.class)
-    public ResponseEntity<String> handleInvalidPaymentTypeException(InvalidPaymentTypeException ex) {
+    public ResponseEntity<String> handleInvalidPaymentTypeException(
+            InvalidPaymentTypeException ex) {
         return ResponseEntity.status(ex.getStatus()).body(ex.getMessage());
     }
 

@@ -25,7 +25,8 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<String> generateAccessToken(@RequestBody RefreshTokenDTO dto) throws UserNotFoundException, InvalidTokenException {
+    public ResponseEntity<String> generateAccessToken(@RequestBody RefreshTokenDTO dto)
+            throws UserNotFoundException, InvalidTokenException {
         String accessToken = authService.generateAccessToken(dto.getRefreshToken());
         return ResponseEntity.ok(accessToken);
     }

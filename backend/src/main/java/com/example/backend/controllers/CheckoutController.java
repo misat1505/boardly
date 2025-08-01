@@ -26,23 +26,26 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/checkout")
 public class CheckoutController {
+    private final CheckoutService checkoutService;
     @Value("${stripe.webhook.secret}")
     private String endpointSecret;
-
-    private final CheckoutService checkoutService;
 
     public CheckoutController(CheckoutService checkoutService) {
         this.checkoutService = checkoutService;
     }
 
     @PostMapping("/create-checkout-session")
-    public ResponseEntity<Map<String, String>> createCheckoutSession(@RequestBody PaymentDTO data, @AuthenticationPrincipal User user) throws StripeException, TeamNotFoundException, UserNotFoundException, InvalidPaymentTypeException {
+    public ResponseEntity<Map<String, String>> createCheckoutSession(@RequestBody PaymentDTO data,
+                                                                     @AuthenticationPrincipal User user)
+            throws StripeException, TeamNotFoundException, UserNotFoundException, InvalidPaymentTypeException {
         String sessionId = checkoutService.createCheckoutSession(data, user);
         return ResponseEntity.ok(Map.of("id", sessionId));
     }
 
     @PostMapping("/webhook")
-    public ResponseEntity<String> handleStripeEvent(HttpServletRequest request, @RequestHeader("Stripe-Signature") String sigHeader) throws JsonProcessingException, TeamNotFoundException, UserNotFoundException, MetadataException {
+    public ResponseEntity<String> handleStripeEvent(HttpServletRequest request,
+                                                    @RequestHeader("Stripe-Signature") String sigHeader)
+            throws JsonProcessingException, TeamNotFoundException, UserNotFoundException, MetadataException {
         String payload;
 
         try {

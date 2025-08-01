@@ -1,12 +1,11 @@
 package com.example.backend.infrastructure;
 
+import com.example.backend.domain.entities.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.example.backend.domain.entities.User;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);

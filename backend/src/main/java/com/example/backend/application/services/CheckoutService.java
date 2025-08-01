@@ -27,17 +27,18 @@ import java.util.UUID;
 
 @Service
 public class CheckoutService {
-    @Value("${FRONTEND_URL}")
-    private String frontendUrl;
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
+    @Value("${FRONTEND_URL}")
+    private String frontendUrl;
 
     public CheckoutService(TeamRepository teamRepository, UserRepository userRepository) {
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
     }
 
-    public String createCheckoutSession(@RequestBody PaymentDTO data, User user) throws StripeException, TeamNotFoundException, UserNotFoundException, InvalidPaymentTypeException {
+    public String createCheckoutSession(@RequestBody PaymentDTO data, User user)
+            throws StripeException, TeamNotFoundException, UserNotFoundException, InvalidPaymentTypeException {
         Product product = this.getProduct(data);
 
         SessionCreateParams params = SessionCreateParams.builder()
@@ -71,7 +72,8 @@ public class CheckoutService {
         return session.getId();
     }
 
-    private Product getProduct(PaymentDTO data) throws TeamNotFoundException, UserNotFoundException, InvalidPaymentTypeException {
+    private Product getProduct(PaymentDTO data)
+            throws TeamNotFoundException, UserNotFoundException, InvalidPaymentTypeException {
         if (data.getType() == PaymentType.UPGRADE_TEAM) {
             Optional<Team> teamOptional = this.teamRepository.findById(UUID.fromString(data.getId()));
             Team team = teamOptional.orElseThrow(TeamNotFoundException::new);
@@ -94,7 +96,8 @@ public class CheckoutService {
         throw new InvalidPaymentTypeException();
     }
 
-    public void handlePaymentIntentSucceeded(Event event) throws TeamNotFoundException, UserNotFoundException, JsonProcessingException, MetadataException {
+    public void handlePaymentIntentSucceeded(Event event)
+            throws TeamNotFoundException, UserNotFoundException, JsonProcessingException, MetadataException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode eventJson = mapper.readTree(event.toJson());
 

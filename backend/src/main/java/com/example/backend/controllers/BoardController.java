@@ -38,13 +38,17 @@ public class BoardController {
     }
 
     @PutMapping("/boards/{boardId}")
-    public ResponseEntity<Board> updateBoard(@PathVariable UUID boardId, @RequestBody UpdateBoardDTO updateBoardDTO) throws BoardNotFoundException {
+    public ResponseEntity<Board> updateBoard(@PathVariable UUID boardId,
+                                             @RequestBody UpdateBoardDTO updateBoardDTO)
+            throws BoardNotFoundException {
         Board board = boardService.updateBoard(boardId, updateBoardDTO);
         return ResponseEntity.ok(board);
     }
 
     @PostMapping("/{teamId}/boards")
-    public ResponseEntity<Board> createBoard(@PathVariable UUID teamId, @RequestBody CreateBoardDTO dto) throws TooManyBoardsException, TeamNotFoundException {
+    public ResponseEntity<Board> createBoard(@PathVariable UUID teamId,
+                                             @RequestBody CreateBoardDTO dto)
+            throws TooManyBoardsException, TeamNotFoundException {
         dto.setTeamId(teamId);
         Board board = boardService.createBoard(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(board);

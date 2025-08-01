@@ -12,9 +12,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 public class LoginController {
+    private final AuthService authService;
     @Value("${FRONTEND_URL}")
     private String frontendUrl;
-    private final AuthService authService;
 
     public LoginController(AuthService authService) {
         this.authService = authService;

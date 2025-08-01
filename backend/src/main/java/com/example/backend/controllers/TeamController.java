@@ -34,13 +34,17 @@ public class TeamController {
     }
 
     @PostMapping
-    public ResponseEntity<Team> createTeam(@RequestBody CreateTeamDTO createTeamDTO, @AuthenticationPrincipal User user) throws TeamCreationException, UserNotFoundException {
+    public ResponseEntity<Team> createTeam(@RequestBody CreateTeamDTO createTeamDTO,
+                                           @AuthenticationPrincipal User user)
+            throws TeamCreationException, UserNotFoundException {
         Team team = teamService.createTeam(createTeamDTO, user);
         return ResponseEntity.ok(team);
     }
 
     @PostMapping("/{teamId}/invite")
-    public ResponseEntity<String> inviteUserToTeam(@PathVariable UUID teamId, @RequestBody InviteUserToTeamDTO dto) throws UserNotFoundException, TeamNotFoundException, TooManyTeamsException {
+    public ResponseEntity<String> inviteUserToTeam(@PathVariable UUID teamId,
+                                                   @RequestBody InviteUserToTeamDTO dto)
+            throws UserNotFoundException, TeamNotFoundException, TooManyTeamsException {
         teamService.inviteUserToTeam(teamId, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body("User invited");
     }

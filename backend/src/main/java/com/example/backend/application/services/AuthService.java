@@ -54,7 +54,8 @@ public class AuthService {
         return userRepository.findAll();
     }
 
-    public String generateAccessToken(String refreshToken) throws UserNotFoundException, InvalidTokenException {
+    public String generateAccessToken(String refreshToken)
+            throws UserNotFoundException, InvalidTokenException {
         boolean isTokenValid = jwtService.validateRefreshToken(refreshToken);
         if (!isTokenValid) throw new InvalidTokenException("Invalid refresh token");
 

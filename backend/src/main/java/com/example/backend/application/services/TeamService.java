@@ -19,11 +19,10 @@ import java.util.UUID;
 
 @Service
 public class TeamService {
-    @Value("${MAX_NON_PREMIUM_TEAMS}")
-    private int maxNonPremiumTeams;
-
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
+    @Value("${MAX_NON_PREMIUM_TEAMS}")
+    private int maxNonPremiumTeams;
 
     public TeamService(TeamRepository teamRepository, UserRepository userRepository) {
         this.teamRepository = teamRepository;
@@ -34,7 +33,8 @@ public class TeamService {
         return teamRepository.findAllByMemberId(userId);
     }
 
-    public Team createTeam(CreateTeamDTO createTeamDTO, User userFromContext) throws TeamCreationException, UserNotFoundException {
+    public Team createTeam(CreateTeamDTO createTeamDTO, User userFromContext)
+            throws TeamCreationException, UserNotFoundException {
         User managedUser = userRepository.findById(userFromContext.getId())
                 .orElseThrow(UserNotFoundException::new);
 
@@ -60,7 +60,8 @@ public class TeamService {
         return savedTeam;
     }
 
-    public void inviteUserToTeam(UUID teamId, InviteUserToTeamDTO inviteUserToTeamDTO) throws TeamNotFoundException, UserNotFoundException, TooManyTeamsException {
+    public void inviteUserToTeam(UUID teamId, InviteUserToTeamDTO inviteUserToTeamDTO)
+            throws TeamNotFoundException, UserNotFoundException, TooManyTeamsException {
         UUID userId = inviteUserToTeamDTO.getUserId();
 
         Team team = teamRepository.findById(teamId)

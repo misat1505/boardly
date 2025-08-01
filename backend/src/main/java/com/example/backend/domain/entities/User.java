@@ -1,16 +1,11 @@
 package com.example.backend.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "\"user\"")
@@ -37,7 +32,8 @@ public class User {
     public User() {
     }
 
-    public User(UUID id, String username, String givenName, String email, String imageUrl, boolean isPremium) {
+    public User(UUID id, String username, String givenName, String email, String imageUrl,
+                boolean isPremium) {
         this.id = id;
         this.username = username;
         this.givenName = givenName;

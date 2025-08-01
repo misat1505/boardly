@@ -19,11 +19,10 @@ import java.util.UUID;
 
 @Service
 public class BoardService {
-    @Value("${MAX_NON_PREMIUM_BOARDS}")
-    private int maxNonPremiumBoards;
-
     private final BoardRepository boardRepository;
     private final TeamRepository teamRepository;
+    @Value("${MAX_NON_PREMIUM_BOARDS}")
+    private int maxNonPremiumBoards;
 
     public BoardService(BoardRepository boardRepository, TeamRepository teamRepository) {
         this.boardRepository = boardRepository;
@@ -34,7 +33,8 @@ public class BoardService {
         return boardRepository.findByTeamId(teamId);
     }
 
-    public Board createBoard(CreateBoardDTO dto) throws TooManyBoardsException, TeamNotFoundException {
+    public Board createBoard(CreateBoardDTO dto)
+            throws TooManyBoardsException, TeamNotFoundException {
         Team team = teamRepository.findById(dto.getTeamId())
                 .orElseThrow(TeamNotFoundException::new);
 
@@ -57,7 +57,8 @@ public class BoardService {
         return boardRepository.findById(boardId);
     }
 
-    public Board updateBoard(UUID boardId, UpdateBoardDTO updateBoardDTO) throws BoardNotFoundException {
+    public Board updateBoard(UUID boardId, UpdateBoardDTO updateBoardDTO)
+            throws BoardNotFoundException {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(BoardNotFoundException::new);
 

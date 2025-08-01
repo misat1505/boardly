@@ -1,14 +1,13 @@
 package com.example.backend.controllers;
 
-import java.util.List;
-
+import com.example.backend.application.services.UserService;
+import com.example.backend.domain.entities.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.backend.application.services.UserService;
-import com.example.backend.domain.entities.User;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
