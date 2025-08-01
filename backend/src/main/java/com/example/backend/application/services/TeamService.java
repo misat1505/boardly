@@ -5,6 +5,8 @@ import com.example.backend.domain.dtos.InviteUserToTeamDTO;
 import com.example.backend.domain.entities.Team;
 import com.example.backend.domain.entities.User;
 import com.example.backend.exceptions.teams.TeamCreationException;
+import com.example.backend.exceptions.teams.TeamNotFoundException;
+import com.example.backend.exceptions.teams.TooManyTeamsException;
 import com.example.backend.exceptions.users.UserNotFoundException;
 import com.example.backend.infrastructure.TeamRepository;
 import com.example.backend.infrastructure.UserRepository;
@@ -58,19 +60,19 @@ public class TeamService {
         return savedTeam;
     }
 
-    public void inviteUserToTeam(UUID teamId, InviteUserToTeamDTO inviteUserToTeamDTO) throws IllegalStateException {
+    public void inviteUserToTeam(UUID teamId, InviteUserToTeamDTO inviteUserToTeamDTO) throws TeamNotFoundException, UserNotFoundException, TooManyTeamsException {
         UUID userId = inviteUserToTeamDTO.getUserId();
 
         Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new RuntimeException("Team not found"));
+                .orElseThrow(TeamNotFoundException::new);
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(UserNotFoundException::new);
 
         if (!user.getIsPremium()) {
             Set<Team> usersTeams = teamRepository.findAllByMemberId(user.getId());
             if (usersTeams.size() >= maxNonPremiumTeams) {
-                throw new IllegalStateException("Non-premium users can only be part of " + maxNonPremiumTeams + " teams.");
+                throw new TooManyTeamsException("Non-premium users can only be part of " + maxNonPremiumTeams + " teams.");
             }
         }
 

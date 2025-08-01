@@ -9,8 +9,6 @@ import com.example.backend.domain.dtos.UpdateBoardDTO;
 import com.example.backend.domain.entities.Board;
 import com.example.backend.domain.entities.Team;
 import com.example.backend.domain.entities.User;
-import com.example.backend.exceptions.teams.TeamCreationException;
-import com.example.backend.exceptions.users.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -39,13 +37,9 @@ public class TeamController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createTeam(@RequestBody CreateTeamDTO createTeamDTO, @AuthenticationPrincipal User user) {
-        try {
-            Team team = teamService.createTeam(createTeamDTO, user);
-            return ResponseEntity.ok(team);
-        } catch (TeamCreationException | UserNotFoundException e) {
-            return ResponseEntity.status(e.getStatus()).body(e.getMessage());
-        }
+    public ResponseEntity<Team> createTeam(@RequestBody CreateTeamDTO createTeamDTO, @AuthenticationPrincipal User user) {
+        Team team = teamService.createTeam(createTeamDTO, user);
+        return ResponseEntity.ok(team);
     }
 
     @GetMapping("/{teamId}/boards")
@@ -68,23 +62,15 @@ public class TeamController {
     }
 
     @PostMapping("/{teamId}/boards")
-    public ResponseEntity<?> createBoard(@PathVariable UUID teamId, @RequestBody CreateBoardDTO dto) {
-        try {
-            dto.setTeamId(teamId);
-            Board board = boardService.createBoard(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(board);
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<Board> createBoard(@PathVariable UUID teamId, @RequestBody CreateBoardDTO dto) {
+        dto.setTeamId(teamId);
+        Board board = boardService.createBoard(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(board);
     }
 
     @PostMapping("/{teamId}/invite")
     public ResponseEntity<String> inviteUserToTeam(@PathVariable UUID teamId, @RequestBody InviteUserToTeamDTO dto) {
-        try {
-            teamService.inviteUserToTeam(teamId, dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body("User invited");
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        teamService.inviteUserToTeam(teamId, dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body("User invited");
     }
 }

@@ -4,6 +4,9 @@ import com.example.backend.domain.dtos.CreateBoardDTO;
 import com.example.backend.domain.dtos.UpdateBoardDTO;
 import com.example.backend.domain.entities.Board;
 import com.example.backend.domain.entities.Team;
+import com.example.backend.exceptions.boards.BoardNotFoundException;
+import com.example.backend.exceptions.boards.TooManyBoardsException;
+import com.example.backend.exceptions.teams.TeamNotFoundException;
 import com.example.backend.infrastructure.BoardRepository;
 import com.example.backend.infrastructure.TeamRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,14 +34,14 @@ public class BoardService {
         return boardRepository.findByTeamId(teamId);
     }
 
-    public Board createBoard(CreateBoardDTO dto) throws IllegalStateException {
+    public Board createBoard(CreateBoardDTO dto) throws TooManyBoardsException, TeamNotFoundException {
         Team team = teamRepository.findById(dto.getTeamId())
-                .orElseThrow(() -> new IllegalArgumentException("Team not found"));
+                .orElseThrow(TeamNotFoundException::new);
 
         if (!team.getIsUpgraded()) {
             Set<Board> teamBoards = boardRepository.findByTeamId(team.getId());
             if (teamBoards.size() >= maxNonPremiumBoards) {
-                throw new IllegalStateException("Non-premium team can only have " + maxNonPremiumBoards + " boards.");
+                throw new TooManyBoardsException("Non-premium team can only have " + maxNonPremiumBoards + " boards.");
             }
         }
 
@@ -54,9 +57,9 @@ public class BoardService {
         return boardRepository.findById(boardId);
     }
 
-    public Board updateBoard(UUID boardId, UpdateBoardDTO updateBoardDTO) {
+    public Board updateBoard(UUID boardId, UpdateBoardDTO updateBoardDTO) throws BoardNotFoundException {
         Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new RuntimeException("Board not found"));
+                .orElseThrow(BoardNotFoundException::new);
 
         updateBoardDTO.getTitle().ifPresent(board::setTitle);
         updateBoardDTO.getContent().ifPresent(board::setContent);
