@@ -1,22 +1,21 @@
 package com.example.backend.application.services;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import com.example.backend.domain.dtos.CreateTeamDTO;
 import com.example.backend.domain.dtos.InviteUserToTeamDTO;
 import com.example.backend.domain.entities.Team;
 import com.example.backend.domain.entities.User;
 import com.example.backend.infrastructure.TeamRepository;
 import com.example.backend.infrastructure.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class TeamService {
-    @Value("${team.max-non-premium-teams}")
+    @Value("${MAX_NON_PREMIUM_TEAMS}")
     private int maxNonPremiumTeams;
 
     private final TeamRepository teamRepository;

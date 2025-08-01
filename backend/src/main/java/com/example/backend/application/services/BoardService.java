@@ -1,23 +1,22 @@
 package com.example.backend.application.services;
 
-import java.time.Instant;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import com.example.backend.domain.dtos.CreateBoardDTO;
 import com.example.backend.domain.dtos.UpdateBoardDTO;
 import com.example.backend.domain.entities.Board;
 import com.example.backend.domain.entities.Team;
 import com.example.backend.infrastructure.BoardRepository;
 import com.example.backend.infrastructure.TeamRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class BoardService {
-    @Value("${team.max-non-premium-boards}")
+    @Value("${MAX_NON_PREMIUM_BOARDS}")
     private int maxNonPremiumBoards;
 
     private final BoardRepository boardRepository;

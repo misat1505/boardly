@@ -1,11 +1,5 @@
 package com.example.backend.application.services;
 
-import java.util.Optional;
-import java.util.UUID;
-
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-
 import com.example.backend.domain.dtos.PaymentDTO;
 import com.example.backend.domain.dtos.payments.PaymentType;
 import com.example.backend.domain.dtos.payments.Product;
@@ -19,9 +13,17 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class CheckoutService {
+    @Value("${FRONTEND_URL}")
+    private String frontendUrl;
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
 
@@ -35,8 +37,8 @@ public class CheckoutService {
 
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("http://localhost:3000/payments/success")
-                .setCancelUrl("http://localhost:3000/payments/cancel")
+                .setSuccessUrl(frontendUrl + "/payments/success")
+                .setCancelUrl(frontendUrl + "/payments/cancel")
                 .setCustomerEmail(user.getEmail())
                 .setPaymentIntentData(
                         SessionCreateParams.PaymentIntentData.builder()
