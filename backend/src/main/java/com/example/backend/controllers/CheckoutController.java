@@ -1,19 +1,5 @@
 package com.example.backend.controllers;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.example.backend.application.services.CheckoutService;
 import com.example.backend.domain.dtos.PaymentDTO;
 import com.example.backend.domain.entities.User;
@@ -21,8 +7,15 @@ import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
 import com.stripe.net.Webhook;
-
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -38,13 +31,7 @@ public class CheckoutController {
     }
 
     @PostMapping("/create-checkout-session")
-    public ResponseEntity<Map<String, String>> createCheckoutSession(@RequestBody PaymentDTO data) throws StripeException {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (!(principal instanceof User user)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
+    public ResponseEntity<Map<String, String>> createCheckoutSession(@RequestBody PaymentDTO data, @AuthenticationPrincipal User user) throws StripeException {
         String sessionId = checkoutService.createCheckoutSession(data, user);
         return ResponseEntity.ok(Map.of("id", sessionId));
     }
