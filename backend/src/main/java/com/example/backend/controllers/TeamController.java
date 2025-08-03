@@ -8,6 +8,7 @@ import com.example.backend.domain.entities.User;
 import com.example.backend.exceptions.teams.TeamCreationException;
 import com.example.backend.exceptions.teams.TeamNotFoundException;
 import com.example.backend.exceptions.teams.TooManyTeamsException;
+import com.example.backend.exceptions.users.UnauthorizedException;
 import com.example.backend.exceptions.users.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,8 @@ public class TeamController {
     }
 
     @GetMapping
-    public ResponseEntity<Set<Team>> getUserTeams(@AuthenticationPrincipal User user) {
+    public ResponseEntity<Set<Team>> getUserTeams(@AuthenticationPrincipal User user)
+            throws UserNotFoundException {
         Set<Team> teams = teamService.getUserTeams(user.getId());
         return ResponseEntity.ok(teams);
     }
@@ -37,15 +39,16 @@ public class TeamController {
     public ResponseEntity<Team> createTeam(@RequestBody CreateTeamDTO createTeamDTO,
                                            @AuthenticationPrincipal User user)
             throws TeamCreationException, UserNotFoundException {
-        Team team = teamService.createTeam(createTeamDTO, user);
+        Team team = teamService.createTeam(createTeamDTO, user.getId());
         return ResponseEntity.ok(team);
     }
 
     @PostMapping("/{teamId}/invite")
     public ResponseEntity<String> inviteUserToTeam(@PathVariable UUID teamId,
-                                                   @RequestBody InviteUserToTeamDTO dto)
-            throws UserNotFoundException, TeamNotFoundException, TooManyTeamsException {
-        teamService.inviteUserToTeam(teamId, dto);
+                                                   @RequestBody InviteUserToTeamDTO dto,
+                                                   @AuthenticationPrincipal User user)
+            throws UserNotFoundException, TeamNotFoundException, TooManyTeamsException, UnauthorizedException {
+        teamService.inviteUserToTeam(teamId, dto, user.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body("User invited");
     }
 }

@@ -8,7 +8,6 @@ import com.example.backend.infrastructure.UserRepository;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -48,10 +47,6 @@ public class AuthService {
     public Optional<User> findById(String id) {
         UUID uuid = UUID.fromString(id);
         return userRepository.findById(uuid);
-    }
-
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
     }
 
     public String generateAccessToken(String refreshToken)
