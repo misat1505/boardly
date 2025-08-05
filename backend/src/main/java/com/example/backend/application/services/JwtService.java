@@ -14,20 +14,30 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    @Value("${JWT_ACCESS_SECRET}")
-    private String accessSecretRaw;
 
-    @Value("${JWT_REFRESH_SECRET}")
-    private String refreshSecretRaw;
+    private final String accessSecretRaw;
 
-    @Value("${JWT_ACCESS_EXPIRATION_MS}")
-    private long accessTokenExpirationMs;
 
-    @Value("${JWT_REFRESH_EXPIRATION_MS}")
-    private long refreshTokenExpirationMs;
+    private final String refreshSecretRaw;
+
+
+    private final long accessTokenExpirationMs;
+
+    private final long refreshTokenExpirationMs;
 
     private Key accessKey;
     private Key refreshKey;
+
+    public JwtService(@Value("${JWT_ACCESS_SECRET}")
+                      String accessSecretRaw, @Value("${JWT_REFRESH_SECRET}")
+                      String refreshSecretRaw, @Value("${JWT_ACCESS_EXPIRATION_MS}")
+                      long accessTokenExpirationMs, @Value("${JWT_REFRESH_EXPIRATION_MS}")
+                      long refreshTokenExpirationMs) {
+        this.accessSecretRaw = accessSecretRaw;
+        this.refreshSecretRaw = refreshSecretRaw;
+        this.accessTokenExpirationMs = accessTokenExpirationMs;
+        this.refreshTokenExpirationMs = refreshTokenExpirationMs;
+    }
 
     @PostConstruct
     public void init() {

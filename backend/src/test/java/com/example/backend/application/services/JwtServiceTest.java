@@ -11,19 +11,14 @@ public class JwtServiceTest {
 
     private JwtService jwtService;
 
-    private final String testAccessSecret = "access-access-access-access-access-access-access-123";
-    private final String testRefreshSecret = "refresh-refresh-refresh-refresh-refresh-refresh-456";
-    private final long accessExp = 1000 * 60 * 60;
-    private final long refreshExp = 1000 * 60 * 60 * 24;
-
     @BeforeEach
-    void setUp() throws Exception {
-        jwtService = new JwtService();
+    void setUp() {
+        String testAccessSecret = "access-access-access-access-access-access-access-123";
+        String testRefreshSecret = "refresh-refresh-refresh-refresh-refresh-refresh-456";
+        long accessExp = 1000 * 60 * 60;
+        long refreshExp = 1000 * 60 * 60 * 24;
 
-        setField(jwtService, "accessSecretRaw", testAccessSecret);
-        setField(jwtService, "refreshSecretRaw", testRefreshSecret);
-        setField(jwtService, "accessTokenExpirationMs", accessExp);
-        setField(jwtService, "refreshTokenExpirationMs", refreshExp);
+        jwtService = new JwtService(testAccessSecret, testRefreshSecret, accessExp, refreshExp);
 
         jwtService.init();
     }
