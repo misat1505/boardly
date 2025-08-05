@@ -1,106 +1,64 @@
 package com.example.backend.application.services;
 
-import com.example.backend.domain.entities.User;
-import jakarta.servlet.FilterChain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.io.IOException;
-import java.util.Optional;
-import java.util.UUID;
+import java.lang.reflect.Field;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-class JwtServiceTest {
+public class JwtServiceTest {
 
     private JwtService jwtService;
-    private AuthService authService;
-    private JwtAuthFilter jwtAuthFilter;
-    private FilterChain filterChain;
+
+    private final String testAccessSecret = "access-access-access-access-access-access-access-123";
+    private final String testRefreshSecret = "refresh-refresh-refresh-refresh-refresh-refresh-456";
+    private final long accessExp = 1000 * 60 * 60;
+    private final long refreshExp = 1000 * 60 * 60 * 24;
 
     @BeforeEach
-    void setUp() {
-        jwtService = mock(JwtService.class);
-        authService = mock(AuthService.class);
-        jwtAuthFilter = new JwtAuthFilter(jwtService, authService);
-        filterChain = mock(FilterChain.class);
+    void setUp() throws Exception {
+        jwtService = new JwtService();
 
-        SecurityContextHolder.clearContext();
+        setField(jwtService, "accessSecretRaw", testAccessSecret);
+        setField(jwtService, "refreshSecretRaw", testRefreshSecret);
+        setField(jwtService, "accessTokenExpirationMs", accessExp);
+        setField(jwtService, "refreshTokenExpirationMs", refreshExp);
+
+        jwtService.init();
     }
 
     @Test
-    void doFilterInternal_validToken_setsAuthentication()
-            throws IOException, jakarta.servlet.ServletException {
-        String token = "valid-token";
-        String userId = "123e4567-e89b-12d3-a456-426614174000";
-        User user = new User();
-        user.setId(UUID.fromString(userId));
+    void generateAndValidateAccessToken() {
+        String username = "user123";
+        String token = jwtService.generateAccessToken(username);
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "Bearer " + token);
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        when(jwtService.validateAccessToken(token)).thenReturn(true);
-        when(jwtService.extractUsernameFromAccessToken(token)).thenReturn(userId);
-        when(authService.findById(userId)).thenReturn(Optional.of(user));
-
-        jwtAuthFilter.doFilterInternal(request, response, filterChain);
-
-        // Make sure security context is updated
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        assert authentication != null;
-        assert authentication.getPrincipal().equals(user);
-        assert authentication.isAuthenticated();
-
-        verify(filterChain).doFilter(request, response);
+        assertTrue(jwtService.validateAccessToken(token));
+        assertEquals(username, jwtService.extractUsernameFromAccessToken(token));
     }
 
     @Test
-    void doFilterInternal_invalidToken_doesNotSetAuthentication() throws Exception {
-        String token = "invalid-token";
+    void generateAndValidateRefreshToken() {
+        String username = "user456";
+        String token = jwtService.generateRefreshToken(username);
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "Bearer " + token);
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        when(jwtService.validateAccessToken(token)).thenReturn(false);
-
-        jwtAuthFilter.doFilterInternal(request, response, filterChain);
-
-        assert SecurityContextHolder.getContext().getAuthentication() == null;
-        verify(filterChain).doFilter(request, response);
+        assertTrue(jwtService.validateRefreshToken(token));
+        assertEquals(username, jwtService.extractUsernameFromRefreshToken(token));
     }
 
     @Test
-    void doFilterInternal_missingAuthorizationHeader_doesNotSetAuthentication() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        jwtAuthFilter.doFilterInternal(request, response, filterChain);
-
-        assert SecurityContextHolder.getContext().getAuthentication() == null;
-        verify(filterChain).doFilter(request, response);
+    void invalidAccessTokenReturnsFalse() {
+        assertFalse(jwtService.validateAccessToken("invalid.token.value"));
     }
 
     @Test
-    void doFilterInternal_userNotFound_doesNotSetAuthentication() throws Exception {
-        String token = "valid-token";
-        String userId = "non-existent-id";
+    void invalidRefreshTokenReturnsFalse() {
+        assertFalse(jwtService.validateRefreshToken("invalid.token.value"));
+    }
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "Bearer " + token);
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        when(jwtService.validateAccessToken(token)).thenReturn(true);
-        when(jwtService.extractUsernameFromAccessToken(token)).thenReturn(userId);
-        when(authService.findById(userId)).thenReturn(Optional.empty());
-
-        jwtAuthFilter.doFilterInternal(request, response, filterChain);
-
-        assert SecurityContextHolder.getContext().getAuthentication() == null;
-        verify(filterChain).doFilter(request, response);
+    private void setField(Object target, String fieldName, Object value) throws Exception {
+        Field field = JwtService.class.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(target, value);
     }
 }
