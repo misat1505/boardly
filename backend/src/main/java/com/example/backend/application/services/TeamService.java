@@ -22,12 +22,14 @@ import java.util.UUID;
 public class TeamService {
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
-    @Value("${MAX_NON_PREMIUM_TEAMS}")
-    private int maxNonPremiumTeams;
+    private final int maxNonPremiumTeams;
 
-    public TeamService(TeamRepository teamRepository, UserRepository userRepository) {
+    public TeamService(TeamRepository teamRepository, UserRepository userRepository,
+                       @Value("${MAX_NON_PREMIUM_TEAMS}")
+                       int maxNonPremiumTeams) {
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
+        this.maxNonPremiumTeams = maxNonPremiumTeams;
     }
 
     public Set<Team> getUserTeams(UUID userId) throws UserNotFoundException {
