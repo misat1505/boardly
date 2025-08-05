@@ -13,11 +13,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RestController
 public class LoginController {
     private final AuthService authService;
-    @Value("${FRONTEND_URL}")
-    private String frontendUrl;
+    private final String frontendUrl;
 
-    public LoginController(AuthService authService) {
+    public LoginController(AuthService authService, @Value("${FRONTEND_URL}")
+    String frontendUrl) {
         this.authService = authService;
+        this.frontendUrl = frontendUrl;
     }
 
     @GetMapping("/oauth2/login/success")

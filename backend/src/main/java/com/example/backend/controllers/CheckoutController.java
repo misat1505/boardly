@@ -27,11 +27,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/checkout")
 public class CheckoutController {
     private final CheckoutService checkoutService;
-    @Value("${stripe.webhook.secret}")
-    private String endpointSecret;
+    private final String endpointSecret;
 
-    public CheckoutController(CheckoutService checkoutService) {
+    public CheckoutController(CheckoutService checkoutService, @Value("${stripe.webhook.secret}")
+    String endpointSecret) {
         this.checkoutService = checkoutService;
+        this.endpointSecret = endpointSecret;
     }
 
     @PostMapping("/create-checkout-session")
