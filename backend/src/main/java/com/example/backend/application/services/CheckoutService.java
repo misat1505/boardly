@@ -29,12 +29,14 @@ import java.util.UUID;
 public class CheckoutService {
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
-    @Value("${FRONTEND_URL}")
-    private String frontendUrl;
+    private final String frontendUrl;
 
-    public CheckoutService(TeamRepository teamRepository, UserRepository userRepository) {
+    public CheckoutService(TeamRepository teamRepository, UserRepository userRepository,
+                           @Value("${FRONTEND_URL}")
+                           String frontendUrl) {
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
+        this.frontendUrl = frontendUrl;
     }
 
     public String createCheckoutSession(@RequestBody PaymentDTO data, User user)
