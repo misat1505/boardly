@@ -26,14 +26,15 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
-    @Value("${MAX_NON_PREMIUM_BOARDS}")
-    private int maxNonPremiumBoards;
+    private final int maxNonPremiumBoards;
 
     public BoardService(BoardRepository boardRepository, TeamRepository teamRepository,
-                        UserRepository userRepository) {
+                        UserRepository userRepository, @Value("${MAX_NON_PREMIUM_BOARDS}")
+                        int maxNonPremiumBoards) {
         this.boardRepository = boardRepository;
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
+        this.maxNonPremiumBoards = maxNonPremiumBoards;
     }
 
     public Set<Board> getTeamBoards(UUID teamId, UUID userId) throws UserNotFoundException,
