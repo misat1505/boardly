@@ -10,10 +10,10 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class UserServiceTest {
-
+public class UserServiceTest {
     private UserRepository userRepository;
     private UserService userService;
 
@@ -52,4 +52,3 @@ class UserServiceTest {
         verify(userRepository, never()).findByUsernameContainingIgnoreCase(any());
     }
 }
-
