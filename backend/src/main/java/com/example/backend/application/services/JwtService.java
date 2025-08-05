@@ -13,16 +13,9 @@ import java.util.Date;
 
 @Service
 public class JwtService {
-
-
     private final String accessSecretRaw;
-
-
     private final String refreshSecretRaw;
-
-
     private final long accessTokenExpirationMs;
-
     private final long refreshTokenExpirationMs;
 
     private Key accessKey;
