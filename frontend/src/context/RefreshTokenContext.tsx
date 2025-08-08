@@ -4,11 +4,7 @@ import { createContext, PropsWithChildren, useContext, useEffect } from "react";
 
 type RefreshTokenContextProps = PropsWithChildren & {};
 
-type RefreshTokenContextProvidedValues = {};
-
-const RefreshTokenContext = createContext<
-  RefreshTokenContextProvidedValues | undefined
->(undefined);
+const RefreshTokenContext = createContext(undefined);
 
 export const useRefreshTokenContext = () => {
   const context = useContext(RefreshTokenContext);
@@ -29,7 +25,7 @@ const RefreshTokenProvider = ({ children }: RefreshTokenContextProps) => {
   }, []);
 
   return (
-    <RefreshTokenContext.Provider value={{}}>
+    <RefreshTokenContext.Provider value={undefined}>
       {children}
     </RefreshTokenContext.Provider>
   );

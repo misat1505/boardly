@@ -22,7 +22,8 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login**", "/auth/refresh", "/oauth2/**", "/error").permitAll()
+                        .requestMatchers("/login**", "/auth/refresh", "/oauth2/**", "/error",
+                                "/checkout/webhook").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
