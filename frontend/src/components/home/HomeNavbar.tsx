@@ -1,14 +1,14 @@
-import { getCurrentUser } from "@/actions/user/getCurrentUser";
 import { ThemeSwitch } from "../ui/theme-switch";
 import Link from "next/link";
 import { buttonVariants } from "../ui/button";
 import DashboardUserDropdown from "../dashboard/DashboardUserDropdown";
 import Image from "next/image";
 import { DEFAULT_SEO_CONFIG } from "@/constants/seo";
+import { User } from "@/types/User";
 
-const HomeNavbar = async () => {
-  const user = await getCurrentUser();
+type HomeNavbarProps = { user: User | null };
 
+const HomeNavbar = async ({ user }: HomeNavbarProps) => {
   return (
     <>
       <div className="fixed h-12 w-[calc(100vw-2rem)] z-50 top-2 left-2 bg-muted flex items-center justify-between p-2 rounded-md border border-muted-foreground">
