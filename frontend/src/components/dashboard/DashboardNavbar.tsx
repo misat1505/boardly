@@ -10,6 +10,7 @@ import {
 import { Button } from "../ui/button";
 import GoPro from "./GoPro";
 import { User } from "@/types/User";
+import DashboardUserDropdown from "./DashboardUserDropdown";
 
 const DashboardNavbar = async () => {
   const user = (await getCurrentUser()) as User;
@@ -23,31 +24,7 @@ const DashboardNavbar = async () => {
         <div className="flex justify-center items-center gap-x-2">
           <ThemeSwitch />
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="hover:cursor-pointer"
-              >
-                <Avatar>
-                  <AvatarImage src={user.imageUrl} alt={user.username} />
-                  <AvatarFallback>
-                    {user.username.toUpperCase()[0]}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-fit min-w-40">
-              <h2 className="font-bold text-center px-1 pt-1">
-                {user.username}
-              </h2>
-              <h2 className="text-xs text-center px-1 pb-1">{user.email}</h2>
-              <DropdownMenuItem>Preferences</DropdownMenuItem>
-              <GoPro user={user} />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <DashboardUserDropdown user={user} />
         </div>
       </nav>
       <div className="h-13" />
