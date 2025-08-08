@@ -6,7 +6,7 @@ export default async function Home() {
     <div>
       <HomeNavbar />
       <HeaderSection />
-      some other content
+      <div className="h-[100rem]" />
     </div>
   );
 }
