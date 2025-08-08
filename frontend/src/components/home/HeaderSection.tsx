@@ -9,7 +9,7 @@ const HeaderSection = () => {
   const { theme } = useTheme();
 
   return (
-    <div className="h-screen relative">
+    <header className="h-screen relative">
       <GridBackground
         speed={0.5}
         squareSize={40}
@@ -19,7 +19,7 @@ const HeaderSection = () => {
         className="h-screen"
       />
       <HeaderSectionContent />
-    </div>
+    </header>
   );
 };
 

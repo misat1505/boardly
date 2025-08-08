@@ -1,4 +1,5 @@
 import HeaderSection from "@/components/home/HeaderSection";
+import HeroSection from "@/components/home/HeroSection";
 import HomeNavbar from "@/components/home/HomeNavbar";
 
 export default async function Home() {
@@ -6,6 +7,7 @@ export default async function Home() {
     <div>
       <HomeNavbar />
       <HeaderSection />
+      <HeroSection />
       <div className="h-[100rem]" />
     </div>
   );
