@@ -62,7 +62,6 @@ const TeamBoardsContent = ({ boards }: TeamBoardsContentProps) => {
 type BoardCardProps = { board: Board };
 
 const BoardCard = ({ board }: BoardCardProps) => {
-  console.log(board.previewUrl)
   return (
     <Link key={board.id} href={`/b/${board.id}`}>
       <Card className="border-muted-foreground/20 hover:bg-muted transition-colors h-full">
@@ -78,7 +77,7 @@ const BoardCard = ({ board }: BoardCardProps) => {
           ) : (
             <div
               className="bg-background rounded-sm"
-              style={{ width: 350, height: 175 }}
+              style={{ width: 350, height: 300 }}
             />
           )}
         </CardContent>
