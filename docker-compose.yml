@@ -48,6 +48,35 @@ services:
     entrypoint: /bin/sh
     command: >
       -c "stripe listen --api-key ${STRIPE_SECRET_KEY} --forward-to host.docker.internal:8080/checkout/webhook"
+  
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_HOST: database
+      APP_NAME: ${APP_NAME}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      JWT_ACCESS_EXPIRATION_MS: ${JWT_ACCESS_EXPIRATION_MS}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      JWT_REFRESH_EXPIRATION_MS: ${JWT_REFRESH_EXPIRATION_MS}
+      STRIPE_SECRET: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      MAX_NON_PREMIUM_TEAMS: ${MAX_NON_PREMIUM_TEAMS}
+      MAX_NON_PREMIUM_BOARDS: ${MAX_NON_PREMIUM_BOARDS}
+      FRONTEND_URL: ${FRONTEND_URL}
+    depends_on:
+      - database
+      - minio
+    ports:
+      - "${BACKEND_PORT}:8080"
 
 volumes:
   database-data:
