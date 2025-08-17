@@ -14,7 +14,7 @@ const LoginPage = () => {
           </p>
         </div>
         <Link
-          href={`${process.env.NEXT_APP_API_URL}/oauth2/authorization/google`}
+          href={`${process.env.NEXT_PUBLIC_LOGIN_REDIRECT}/oauth2/authorization/google`}
           className={cn(
             buttonVariants({ variant: "default", size: "lg" }),
             "w-full flex items-center justify-center gap-2"
