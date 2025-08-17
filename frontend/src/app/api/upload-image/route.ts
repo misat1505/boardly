@@ -3,7 +3,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 const s3Client = new S3Client({
   region: "us-east-1",
-  endpoint: process.env.MINIO_ENDPOINT!,
+  endpoint: process.env.MINIO_INNER_ENDPOINT!,
   credentials: {
     accessKeyId: process.env.MINIO_ROOT_USER!,
     secretAccessKey: process.env.MINIO_ROOT_PASSWORD!,

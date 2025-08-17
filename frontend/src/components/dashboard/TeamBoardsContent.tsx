@@ -10,8 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import Image from "next/image";
-import { Button, buttonVariants } from "../ui/button";
+import { buttonVariants } from "../ui/button";
 import { useState } from "react";
 import { FloatingLabelInput } from "../ui/floating-label-input";
 import { CiCirclePlus } from "react-icons/ci";
@@ -68,19 +67,17 @@ const BoardCard = ({ board }: BoardCardProps) => {
       <Card className="border-muted-foreground/20 hover:bg-muted transition-colors h-full">
         <CardContent>
           {board.previewUrl ? (
-            <Image
+            <img
               src={`${board.previewUrl}?v=${new Date(
                 board.updatedAt
               ).getTime()}`}
               alt={board.title}
-              width={350}
-              height={300}
-              className="bg-background rounded-sm"
+              className="bg-background rounded-sm w-[350px] h-[300px] object-cover"
             />
           ) : (
             <div
               className="bg-background rounded-sm"
-              style={{ width: 350, height: 175 }}
+              style={{ width: 350, height: 300 }}
             />
           )}
         </CardContent>
